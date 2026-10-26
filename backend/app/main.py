@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from .config import settings
-from .routers import auth, income_entries, expenses, buckets, summary
+from .routers import auth, account, income_entries, expenses, buckets, summary
 
 app = FastAPI(title="Finanças API", description="API multi-user de gestão financeira", version="1.0.0")
 
@@ -20,6 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(auth.router, prefix="/api")
+app.include_router(account.router, prefix="/api")
 app.include_router(income_entries.router, prefix="/api")
 app.include_router(expenses.router, prefix="/api")
 app.include_router(buckets.router, prefix="/api")

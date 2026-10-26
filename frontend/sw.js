@@ -1,5 +1,5 @@
 // Incrementar em cada release: o activate apaga todas as caches com outro nome.
-const CACHE_VERSION = "financas-v4";
+const CACHE_VERSION = "financas-v5";
 const PRECACHE = ["./", "./index.html", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png"];
 // Ficheiros que têm de estar sempre na versão mais recente quando há rede.
 const NETWORK_FIRST = ["/", "/index.html", "/manifest.json", "/sw.js"];

@@ -25,6 +25,7 @@ class User(Base):
 
     income = relationship("Income", back_populates="user", uselist=False, cascade="all, delete-orphan")
     income_entries = relationship("IncomeEntry", back_populates="user", cascade="all, delete-orphan")
+    account_settings = relationship("AccountSettings", back_populates="user", uselist=False, cascade="all, delete-orphan")
     categories = relationship("ExpenseCategory", back_populates="user", cascade="all, delete-orphan")
     buckets = relationship("SavingsBucket", back_populates="user", cascade="all, delete-orphan")
 
@@ -68,6 +69,19 @@ class IncomeEntry(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="income_entries")
+
+
+class AccountSettings(Base):
+    """Saldo inicial: o dinheiro na conta no início de opening_date (movimentos anteriores não contam)."""
+    __tablename__ = "account_settings"
+
+    id = Column(UUID(as_uuid=False), primary_key=True, default=gen_uuid)
+    user_id = Column(UUID(as_uuid=False), ForeignKey("users.id"), unique=True, nullable=False)
+    opening_balance = Column(Numeric(12, 2), nullable=False)  # pode ser negativo
+    opening_date = Column(Date, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user = relationship("User", back_populates="account_settings")
 
 
 class ExpenseCategory(Base):

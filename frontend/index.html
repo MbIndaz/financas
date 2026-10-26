@@ -138,7 +138,11 @@ h1{font-size:clamp(1.4rem, 1.15rem + 1.2vw, 1.85rem); margin:0; letter-spacing:-
 }
 .saldo-card{container-type:inline-size;}
 .hero-lbl{font-size:.8125rem; color:var(--text-dim); font-weight:600;}
-.hero{font-size:2.25rem; font-size:clamp(1.75rem, 14cqi, 3rem); font-weight:800; letter-spacing:-.03em; line-height:1.1; margin:.25rem 0 .875rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.hero-head{display:flex; align-items:center; justify-content:space-between; gap:.5rem; margin-top:-.375rem;}
+.hero{font-size:2.25rem; font-size:clamp(1.75rem, 14cqi, 3rem); font-weight:800; letter-spacing:-.03em; line-height:1.1; margin:.125rem 0 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.hero-meta{font-size:.75rem; color:var(--text-dim); margin:.25rem 0 .875rem; min-height:1em;}
+.opening-hint{display:grid; gap:.5rem; font-size:.8125rem; color:var(--text-dim); background:var(--input-bg); border-radius:.75rem; padding:.625rem .75rem; margin:.5rem 0 .875rem;}
+.opening-hint .btn-soft{width:100%; color:var(--accent);}
 .split-bar{display:flex; gap:2px; height:.625rem; border-radius:999px; overflow:hidden; background:var(--track);}
 .split-bar span{display:block; height:100%;}
 .split-legend{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr)); gap:.5rem .75rem; margin-top:.75rem; font-size:.8125rem; color:var(--text-dim);}
@@ -287,6 +291,8 @@ input[type="date"]::-webkit-date-and-time-value{text-align:left;}
 input[type="date"]::-webkit-calendar-picker-indicator{opacity:.7;}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline-offset:0;}
 .amt-input{font-size:clamp(1.5rem, 1.2rem + 2vw, 1.75rem); font-weight:800; text-align:center;}
+.amt-row{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:.5rem; align-items:stretch;}
+.sign-btn{min-width:3.25rem; min-height:44px; background:var(--input-bg); border:1px solid var(--card-border); border-radius:.75rem; font-size:1.25rem; font-weight:800; color:var(--text);}
 .month-pick{display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); gap:.5rem;}
 .switch-row{display:flex; align-items:center; justify-content:space-between; gap:1rem; margin:1rem 0 0; min-height:44px; text-transform:none; letter-spacing:0; font-size:.9375rem; font-weight:600; color:var(--text); cursor:pointer;}
 .switch{appearance:none; -webkit-appearance:none; flex-shrink:0; width:3rem; min-width:3rem; height:1.75rem; min-height:0; padding:0; border-radius:999px; background:var(--track); border:1px solid var(--card-border); position:relative; cursor:pointer; transition:background .2s;}
@@ -407,8 +413,16 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
     <main class="view" id="view-dashboard">
       <div class="dash-grid">
         <section class="card saldo-card d-saldo">
-          <div class="hero-lbl">Saldo total</div>
+          <div class="hero-head">
+            <div class="hero-lbl">Saldo total</div>
+            <button class="icon-btn" onclick="openOpeningModal()" title="Saldo inicial" aria-label="Editar saldo inicial">✎</button>
+          </div>
           <div class="hero money" id="d-saldo">0,00 €</div>
+          <div class="hero-meta" id="d-since"></div>
+          <div class="opening-hint hidden" id="d-opening-hint">
+            <span>Define o teu saldo inicial para o saldo refletir o dinheiro real da conta.</span>
+            <button class="btn-soft" onclick="openOpeningModal()">Definir saldo inicial</button>
+          </div>
           <div class="split-bar" id="d-split" aria-hidden="true"></div>
           <div class="split-legend">
             <div><span class="dot" style="background:var(--accent)"></span>Poupado<b class="money" id="d-poupado">0,00 €</b></div>
@@ -479,6 +493,10 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
     <main class="view hidden" id="view-settings">
       <div class="view-head"><h2>Definições</h2><div class="sub">Conta e convites</div></div>
       <div class="card">
+        <div class="card-title">Saldo inicial</div>
+        <div id="opening-settings"></div>
+      </div>
+      <div class="card">
         <div class="card-title">Convidar alguém</div>
         <button class="btn-primary" style="margin-top:0" onclick="createInvite()">Gerar código de convite</button>
         <div id="invites-list"></div>
@@ -537,7 +555,7 @@ function compact(v){
 function fmtDate(iso){ if(!iso) return ''; const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`; }
 function fmtMonthOf(iso){ const [y,m] = iso.split('-'); return `${m}/${y}`; }
 function parseMoney(s){
-  s = String(s ?? '').trim().replace(/\s|€/g, '');
+  s = String(s ?? '').trim().replace(/\s|€/g, '').replace(/−/g, '-');
   if(s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
   const n = parseFloat(s);
   return Number.isFinite(n) ? Math.round(n*100)/100 : NaN;
@@ -709,6 +727,7 @@ function renderAll(){
   renderIncome();
   renderCategories();
   renderBuckets();
+  renderOpeningSettings();
 }
 
 // ---------- INÍCIO ----------
@@ -716,6 +735,9 @@ function renderDashboard(){
   const s = summary;
   $('d-saldo').textContent = fmt(s.saldo_total);
   $('d-saldo').classList.toggle('neg', s.saldo_total < 0);
+  $('d-since').textContent = s.opening_defined ? 'desde ' + fmtDate(s.opening_date) : '';
+  $('d-since').classList.toggle('hidden', !s.opening_defined);
+  $('d-opening-hint').classList.toggle('hidden', s.opening_defined);
   $('d-poupado').textContent = fmt(s.total_poupado);
   $('d-disponivel').textContent = fmt(s.disponivel);
   const p = Math.max(s.total_poupado, 0), d = Math.max(s.disponivel, 0), tot = p + d;
@@ -834,6 +856,47 @@ function renderGoals(){
       ${pct!==null ? `<div class="track"><div class="fill" style="width:${pct*100}%"></div></div>` : ''}
     </div>`;
   }).join('');
+}
+
+// ---------- SALDO INICIAL ----------
+function renderOpeningSettings(){
+  const s = summary;
+  $('opening-settings').innerHTML = s.opening_defined
+    ? `<div><b class="money">${fmt(s.opening_balance)}</b> <span class="sub">no início de ${fmtDate(s.opening_date)}</span></div>
+       <button class="btn-soft" style="width:100%; margin-top:.75rem" onclick="openOpeningModal()">Editar saldo inicial</button>`
+    : `<div class="sub">Ainda não definido: o saldo conta todos os movimentos desde o primeiro registo.</div>
+       <button class="btn-soft" style="width:100%; margin-top:.75rem" onclick="openOpeningModal()">Definir saldo inicial</button>`;
+}
+
+function openOpeningModal(){
+  const s = summary || {};
+  showModal(`
+    <h2>Saldo inicial</h2>
+    <label for="ob-amount">Saldo na conta</label>
+    <div class="amt-row">
+      <input id="ob-amount" class="amt-input" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" value="${esc(s.opening_defined ? moneyInputValue(s.opening_balance) : '')}">
+      <button type="button" class="sign-btn" onclick="toggleSign('ob-amount')" aria-label="Trocar o sinal (saldo negativo)" title="Saldo negativo">±</button>
+    </div>
+    <label for="ob-date">A partir de</label>
+    <input id="ob-date" type="date" max="${todayISO()}" value="${s.opening_defined ? s.opening_date : todayISO()}">
+    <p class="hint">Indica quanto tens na conta no início desse dia. Movimentos anteriores a essa data deixam de contar para o saldo, mas continuam no histórico.</p>
+    <button class="btn-primary" onclick="saveOpening()">Guardar</button>`);
+}
+// o teclado decimal do iPhone não tem sinal de menos
+function toggleSign(id){
+  const el = $(id), v = el.value.trim();
+  el.value = /^[-−]/.test(v) ? v.replace(/^[-−]\s*/, '') : '-' + v;
+}
+function saveOpening(){
+  return run(async ()=>{
+    const opening_balance = parseMoney($('ob-amount').value);
+    const opening_date = $('ob-date').value;
+    if(!Number.isFinite(opening_balance)){ toast('Indica o saldo da conta (pode ser 0 ou negativo).'); return; }
+    if(!opening_date || opening_date > todayISO()){ toast('Indica uma data até hoje.'); return; }
+    await api('/account', {method:'PUT', body: JSON.stringify({opening_balance, opening_date})});
+    closeModal();
+    await loadAll();
+  });
 }
 
 // ---------- RECEITAS ----------

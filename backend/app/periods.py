@@ -2,6 +2,10 @@
 
 Um registo não recorrente conta só no mês da sua data. Um recorrente conta em todos os
 meses desde o mês da sua data até ao mês do end_date (inclusive), ou sem fim se for nulo.
+
+Data de ocorrência (usada no saldo real): a própria date nos não recorrentes; nos
+recorrentes, em cada mês ativo, o dia do mês da date de início (ou o último dia do mês,
+se o mês for mais curto).
 """
 import calendar
 import re
@@ -35,6 +39,35 @@ def parse_month(value: Optional[str]) -> date:
     if not match or not 1 <= int(match.group(2)) <= 12:
         raise HTTPException(status_code=422, detail="Mês inválido, usa o formato AAAA-MM")
     return date(int(match.group(1)), int(match.group(2)), 1)
+
+
+def _month_index(d: date) -> int:
+    return d.year * 12 + (d.month - 1)
+
+
+def occurrence_in_month(entry, m: date) -> date:
+    """Data de ocorrência de um recorrente no mês m (dia da data de início, limitado ao fim do mês)."""
+    return m.replace(day=min(entry.date.day, calendar.monthrange(m.year, m.month)[1]))
+
+
+def count_occurrences(entry, start: date, end: date) -> int:
+    """Quantas ocorrências do registo caem em [start, end] (inclusive). O(1) por registo."""
+    if start > end:
+        return 0
+    if not entry.is_recurring:
+        return 1 if start <= entry.date <= end else 0
+    lo = max(_month_index(entry.date), _month_index(start))
+    hi = _month_index(end)
+    if entry.end_date is not None:
+        hi = min(hi, _month_index(entry.end_date))
+    if lo > hi:
+        return 0
+    # só o primeiro e o último mês do intervalo podem ter a ocorrência fora de [start, end]
+    first_ok = occurrence_in_month(entry, date(lo // 12, lo % 12 + 1, 1)) >= start
+    last_ok = occurrence_in_month(entry, date(hi // 12, hi % 12 + 1, 1)) <= end
+    if lo == hi:
+        return 1 if first_ok and last_ok else 0
+    return (hi - lo + 1) - (not first_ok) - (not last_ok)
 
 
 def month_key(m: date) -> str:

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..auth import get_current_user
-from ..periods import parse_month, month_start, add_months, month_key, is_active
+from ..periods import parse_month, add_months, month_key, is_active, count_occurrences
 from .. import models, schemas
 
 router = APIRouter(prefix="/summary", tags=["summary"], dependencies=[Depends(get_current_user)])
@@ -37,6 +37,7 @@ def get_summary(month: Optional[str] = None, db: Session = Depends(get_db), curr
         .all()
     )
     buckets = db.query(models.SavingsBucket).filter(models.SavingsBucket.user_id == current_user.id).all()
+    settings = db.query(models.AccountSettings).filter(models.AccountSettings.user_id == current_user.id).first()
 
     def received(month_: date) -> float:
         return sum(float(i.amount) for i in incomes if is_active(i, month_))
@@ -49,15 +50,19 @@ def get_summary(month: Optional[str] = None, db: Session = Depends(get_db), curr
     contribuicoes = sum(b.monthly_contribution or 0 for b in buckets)
     total_poupado = sum(b.current_amount or 0 for b in buckets)
 
-    # saldo total: (recebido - gasto) de cada mês desde o primeiro registo até ao mês atual
-    saldo_total = 0.0
-    starts = [month_start(r.date) for r in (*incomes, *expenses)]
-    if starts:
-        current = month_start(date.today())
-        cursor = min(starts)
-        while cursor <= current:
-            saldo_total += received(cursor) - spent(cursor)
-            cursor = add_months(cursor, 1)
+    # saldo total = dinheiro real hoje: saldo inicial (no início de opening_date) mais as ocorrências
+    # de opening_date até hoje. Sem saldo inicial: 0 a partir do registo mais antigo.
+    today = date.today()
+    if settings:
+        opening_balance, opening_date = float(settings.opening_balance), settings.opening_date
+    else:
+        opening_balance = 0.0
+        opening_date = min((r.date for r in (*incomes, *expenses)), default=today)
+    saldo_total = (
+        opening_balance
+        + sum(float(i.amount) * count_occurrences(i, opening_date, today) for i in incomes)
+        - sum(e.amount * count_occurrences(e, opening_date, today) for e in expenses)
+    )
 
     por_categoria = []
     for c in categories:
@@ -81,6 +86,9 @@ def get_summary(month: Optional[str] = None, db: Session = Depends(get_db), curr
         saldo_total=_money(saldo_total),
         total_poupado=_money(total_poupado),
         disponivel=_money(saldo_total - total_poupado),
+        opening_balance=_money(opening_balance) if settings else None,
+        opening_date=opening_date if settings else None,
+        opening_defined=settings is not None,
         por_categoria=por_categoria,
         historico=historico,
         income=_money(recebido),

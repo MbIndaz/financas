@@ -55,6 +55,18 @@ class EndRecurringIn(BaseModel):
     end_month: str  # "AAAA-MM": último mês em que ainda vale
 
 
+# ---------- Conta (saldo inicial) ----------
+class AccountIn(BaseModel):
+    # limite do Numeric(12, 2)
+    opening_balance: float = Field(ge=-9999999999.99, le=9999999999.99)
+    opening_date: Date
+
+
+class AccountOut(BaseModel):
+    opening_balance: Optional[float] = None
+    opening_date: Optional[Date] = None
+
+
 # ---------- Income entries ----------
 class IncomeEntryBase(BaseModel):
     amount: Money
@@ -188,9 +200,12 @@ class SummaryOut(BaseModel):
     gasto: float
     contribuicoes_mensais: float
     pronto_a_gastar: float
-    saldo_total: float
+    saldo_total: float  # dinheiro real hoje: saldo inicial + ocorrências de opening_date até hoje
     total_poupado: float
     disponivel: float
+    opening_balance: Optional[float] = None
+    opening_date: Optional[Date] = None
+    opening_defined: bool
     por_categoria: List[CategoryTotal]
     historico: List[MonthHistory]
     # campos antigos (versão anterior da PWA ainda em cache), calculados para o mês pedido
