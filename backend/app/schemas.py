@@ -1,7 +1,10 @@
-from datetime import datetime
-from typing import Optional, List
+from datetime import date as Date, datetime
+from typing import Annotated, Optional, List
 
-from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+
+# os campos chamam-se "date", por isso o tipo usa o alias Date para não ser sombreado
+Money = Annotated[float, Field(gt=0)]
 
 
 # ---------- Auth ----------
@@ -42,20 +45,53 @@ class InviteOut(BaseModel):
     used_by: Optional[str] = None
 
 
-# ---------- Income ----------
-class IncomeIn(BaseModel):
-    amount: float
-    label: Optional[str] = "Rendimento mensal"
+# ---------- Recorrência (receitas e despesas) ----------
+class ChangeRecurringIn(BaseModel):
+    amount: Money
+    start_month: str  # "AAAA-MM": primeiro mês em que vale o novo valor
 
 
-class IncomeOut(IncomeIn):
+class EndRecurringIn(BaseModel):
+    end_month: str  # "AAAA-MM": último mês em que ainda vale
+
+
+# ---------- Income entries ----------
+class IncomeEntryBase(BaseModel):
+    amount: Money
+    source: str = Field(min_length=1, max_length=60)
+    description: Optional[str] = None
+    date: Optional[Date] = None  # por defeito hoje; nas recorrentes é a data de início
+    is_recurring: bool = False
+    end_date: Optional[Date] = None
+
+
+class IncomeEntryCreate(IncomeEntryBase):
+    pass
+
+
+class IncomeEntryUpdate(BaseModel):
+    amount: Optional[float] = Field(default=None, gt=0)
+    source: Optional[str] = Field(default=None, min_length=1, max_length=60)
+    description: Optional[str] = None
+    date: Optional[Date] = None
+    is_recurring: Optional[bool] = None
+    end_date: Optional[Date] = None
+
+
+class IncomeEntryOut(IncomeEntryBase):
     model_config = ConfigDict(from_attributes=True)
+    id: str
+    amount: float
+    date: Date
 
 
 # ---------- Expenses ----------
 class ExpenseBase(BaseModel):
     title: str
-    amount: float
+    amount: Money
+    date: Optional[Date] = None  # por defeito hoje; nas recorrentes é a data de início
+    is_recurring: bool = False
+    end_date: Optional[Date] = None
 
 
 class ExpenseCreate(ExpenseBase):
@@ -64,13 +100,18 @@ class ExpenseCreate(ExpenseBase):
 
 class ExpenseUpdate(BaseModel):
     title: Optional[str] = None
-    amount: Optional[float] = None
+    amount: Optional[float] = Field(default=None, gt=0)
+    date: Optional[Date] = None
+    is_recurring: Optional[bool] = None
+    end_date: Optional[Date] = None
 
 
 class ExpenseOut(ExpenseBase):
     model_config = ConfigDict(from_attributes=True)
     id: str
     category_id: str
+    amount: float
+    date: Date
 
 
 class CategoryBase(BaseModel):
@@ -128,7 +169,31 @@ class BucketOut(BucketBase):
 
 
 # ---------- Summary ----------
+class CategoryTotal(BaseModel):
+    id: str
+    nome: str
+    icone: Optional[str] = None
+    total: float
+
+
+class MonthHistory(BaseModel):
+    mes: str  # "AAAA-MM"
+    recebido: float
+    gasto: float
+
+
 class SummaryOut(BaseModel):
+    month: str  # "AAAA-MM"
+    recebido: float
+    gasto: float
+    contribuicoes_mensais: float
+    pronto_a_gastar: float
+    saldo_total: float
+    total_poupado: float
+    disponivel: float
+    por_categoria: List[CategoryTotal]
+    historico: List[MonthHistory]
+    # campos antigos (versão anterior da PWA ainda em cache), calculados para o mês pedido
     income: float
     total_expenses: float
     left_after_expenses: float

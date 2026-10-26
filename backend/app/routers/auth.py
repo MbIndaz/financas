@@ -38,9 +38,6 @@ def register(data: schemas.RegisterIn, db: Session = Depends(get_db)):
     db.add(user)
     db.flush()
 
-    # dados iniciais vazios prontos a editar
-    db.add(models.Income(user_id=user.id, amount=0, label="Rendimento mensal"))
-
     if invite:
         invite.used_by = user.id
         from datetime import datetime

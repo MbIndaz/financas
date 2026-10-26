@@ -1,8 +1,8 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 
 from sqlalchemy import (
-    Column, String, Float, DateTime, ForeignKey, Boolean, Integer
+    Column, String, Float, DateTime, ForeignKey, Boolean, Integer, Numeric, Date, CheckConstraint
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -24,6 +24,7 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     income = relationship("Income", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    income_entries = relationship("IncomeEntry", back_populates="user", cascade="all, delete-orphan")
     categories = relationship("ExpenseCategory", back_populates="user", cascade="all, delete-orphan")
     buckets = relationship("SavingsBucket", back_populates="user", cascade="all, delete-orphan")
 
@@ -40,6 +41,7 @@ class InviteCode(Base):
 
 
 class Income(Base):
+    """Valor único antigo; desde a 0002 a app usa IncomeEntry. Mantida só para não perder dados."""
     __tablename__ = "income"
 
     id = Column(UUID(as_uuid=False), primary_key=True, default=gen_uuid)
@@ -49,6 +51,23 @@ class Income(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = relationship("User", back_populates="income")
+
+
+class IncomeEntry(Base):
+    __tablename__ = "income_entries"
+    __table_args__ = (CheckConstraint("amount > 0", name="ck_income_entries_amount_positive"),)
+
+    id = Column(UUID(as_uuid=False), primary_key=True, default=gen_uuid)
+    user_id = Column(UUID(as_uuid=False), ForeignKey("users.id"), nullable=False, index=True)
+    amount = Column(Numeric(12, 2), nullable=False)
+    source = Column(String, nullable=False)  # origem: "Salário", "Venda", "Extra"...
+    description = Column(String, nullable=True)
+    date = Column(Date, nullable=False, default=date.today)  # nas recorrentes é a data de início
+    is_recurring = Column(Boolean, nullable=False, default=False)
+    end_date = Column(Date, nullable=True)  # só recorrentes: último mês em que ainda vale
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="income_entries")
 
 
 class ExpenseCategory(Base):
@@ -72,6 +91,9 @@ class Expense(Base):
     category_id = Column(UUID(as_uuid=False), ForeignKey("expense_categories.id"), nullable=False, index=True)
     title = Column(String, nullable=False)
     amount = Column(Float, nullable=False)
+    date = Column(Date, nullable=False, default=date.today)  # nas recorrentes é a data de início
+    is_recurring = Column(Boolean, nullable=False, default=False)
+    end_date = Column(Date, nullable=True)  # só recorrentes: último mês em que ainda vale
     created_at = Column(DateTime, default=datetime.utcnow)
 
     category = relationship("ExpenseCategory", back_populates="expenses")
