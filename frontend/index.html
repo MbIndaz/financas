@@ -312,6 +312,13 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
   width:max-content; max-width:calc(100% - 2rem); background:var(--text); color:var(--bg); padding:.75rem 1rem; border-radius:.875rem; font-size:.875rem; box-shadow:var(--shadow);
 }
 @media (min-width:900px){ .toast{bottom:calc(1.5rem + var(--safe-b));} }
+/* no topo, para não tapar os botões de um formulário aberto */
+.update-bar{
+  position:fixed; left:50%; transform:translateX(-50%); top:calc(var(--safe-t) + .75rem); z-index:60;
+  display:flex; align-items:center; gap:.75rem; width:max-content; max-width:calc(100% - 2rem);
+  background:var(--text); color:var(--bg); padding:.375rem .375rem .375rem 1rem; border-radius:.875rem; font-size:.875rem; box-shadow:var(--shadow);
+}
+.update-bar button{min-height:44px; padding:.5rem .875rem; border:none; border-radius:.625rem; background:var(--accent); color:#fff; font-weight:700; flex-shrink:0;}
 
 /* ---------- autenticação ---------- */
 #screen-auth{
@@ -482,6 +489,10 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
 
 <div id="modal-root"></div>
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+<div id="update-bar" class="update-bar hidden" role="status" aria-live="polite">
+  <span>Nova versão disponível</span>
+  <button onclick="reloadForUpdate()">Atualizar</button>
+</div>
 
 <script>
 const TOKEN_KEY = 'financas_token';
@@ -1241,8 +1252,43 @@ async function renderInvites(){
     </div>`).join('');
 }
 
+// ---------- ATUALIZAÇÕES (service worker) ----------
+const SW_RELOAD_KEY = 'financas_sw_reload_at';
+
+// a meio de preencher um formulário: modal aberto ou campos de entrada/registo já escritos
+function isEditing(){
+  if($('modal-root').children.length) return true;
+  return !$('screen-auth').classList.contains('hidden') &&
+    [...document.querySelectorAll('#screen-auth input')].some(i => i.value);
+}
+function showUpdateBar(){
+  $('update-bar').classList.remove('hidden');
+}
+function reloadForUpdate(){
+  try{ sessionStorage.setItem(SW_RELOAD_KEY, String(Date.now())); }catch(e){}
+  location.reload();
+}
+
 if('serviceWorker' in navigator){
-  window.addEventListener('load', ()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  let hasController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+    // primeira instalação: a página já é a versão atual, não há nada a recarregar
+    if(!hasController){ hasController = true; return; }
+    // proteção contra loops: se já recarregámos há pouco por causa de uma atualização, só avisa
+    let last = 0;
+    try{ last = Number(sessionStorage.getItem(SW_RELOAD_KEY)) || 0; }catch(e){}
+    if(isEditing() || Date.now() - last < 10000) showUpdateBar();
+    else reloadForUpdate();
+  });
+  window.addEventListener('load', async ()=>{
+    try{
+      const reg = await navigator.serviceWorker.register('sw.js', {updateViaCache:'none'});
+      reg.update().catch(()=>{});
+      document.addEventListener('visibilitychange', ()=>{
+        if(document.visibilityState==='visible') reg.update().catch(()=>{});
+      });
+    }catch(e){}
+  });
 }
 boot();
 </script>
