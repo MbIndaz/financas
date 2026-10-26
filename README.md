@@ -1,6 +1,6 @@
 # Finanças
 
-App multi-utilizador de gestão financeira: rendimento, despesas mensais por categoria, fundo de emergência e objetivos de poupança — tudo editável.
+App multi-utilizador de gestão financeira por envelopes: cada rendimento recebido é repartido por **Despesas** (contas fixas do mês), **Objetivos** (poupanças) e **Para gastar** (o dinheiro livre do dia a dia); os gastos e os pagamentos de contas saem do envelope certo — tudo editável.
 
 - `backend/` — FastAPI + PostgreSQL + Alembic (migrações), JWT multi-user, registo por convite
 - `frontend/` — PWA (single-page, sem build step), servida pela própria API
@@ -98,6 +98,6 @@ Revê sempre o ficheiro gerado em `alembic/versions/` antes de correr `docker co
 
 ## Notas de arquitetura
 
-- **Multi-user real**: cada conta só vê os seus próprios dados (rendimento, categorias, despesas, objetivos), reforçado em todas as queries do backend por `user_id`.
+- **Multi-user real**: cada conta só vê os seus próprios dados (rendimentos, gastos, contas, objetivos), reforçado em todas as queries do backend por `user_id`.
 - **Registo fechado**: não há registo público — só quem tem um código de convite válido (o `ADMIN_INVITE_CODE` para a tua conta, ou um código gerado por um utilizador existente) consegue criar conta.
-- **Cálculos automáticos**: "Despesas mensais" e "Sobra" são sempre calculados a partir dos dados atuais (`GET /api/summary`), nunca guardados como número fixo — editas uma despesa e tudo recalcula sozinho.
+- **Saldos derivados, nunca guardados**: os envelopes (`GET /api/summary`) e o saldo de cada objetivo são somas dos movimentos registados (rendimentos com a sua repartição, gastos, pagamentos de contas, depósitos/levantamentos) entre a data do saldo inicial e hoje — editas ou apagas um movimento e tudo recalcula sozinho, sem nada para sincronizar (ver `backend/app/envelopes.py`). Valores em `Numeric(12, 2)`/`Decimal`, sem floats.

@@ -26,7 +26,7 @@ def update_account(data: schemas.AccountIn, db: Session = Depends(get_db), curre
     if not settings:
         settings = models.AccountSettings(user_id=current_user.id)
         db.add(settings)
-    settings.opening_balance = round(data.opening_balance, 2)
+    settings.opening_balance = data.opening_balance
     settings.opening_date = data.opening_date
     db.commit()
     db.refresh(settings)

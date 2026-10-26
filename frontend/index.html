@@ -21,6 +21,8 @@
   --input-bg:#f0f2f8; --grid:#e1e0d9;
   /* paleta categórica dos gráficos (ordem fixa validada para daltonismo) */
   --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; --c5:#e87ba4; --c6:#008300; --c7:#6250d6; --c8:#e34948; --c-other:#9a9893;
+  /* envelopes: Despesas, Objetivos, Para gastar (validados para daltonismo em todos os pares) */
+  --env-desp:#eb6834; --env-obj:#6250d6; --env-pg:#1baf7a;
   --safe-t:env(safe-area-inset-top,0px); --safe-r:env(safe-area-inset-right,0px);
   --safe-b:env(safe-area-inset-bottom,0px); --safe-l:env(safe-area-inset-left,0px);
   --gutter:clamp(.875rem, 3.5vw, 1.5rem);
@@ -36,6 +38,7 @@
     --track:rgba(255,255,255,.08); --shadow:0 10px 40px rgba(0,0,0,.5);
     --glow:0 0 18px; --tabbar-bg:rgba(10,13,24,.75); --modal-bg:#10141f; --input-bg:rgba(255,255,255,.06); --grid:#262a35;
     --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500; --c5:#d55181; --c6:#008300; --c7:#9085e9; --c8:#e66767; --c-other:#6f6e69;
+    --env-desp:#d95926; --env-obj:#9085e9; --env-pg:#199e70;
     color-scheme:dark;
   }
 }
@@ -46,6 +49,7 @@
   --track:rgba(255,255,255,.08); --shadow:0 10px 40px rgba(0,0,0,.5);
   --glow:0 0 18px; --tabbar-bg:rgba(10,13,24,.75); --modal-bg:#10141f; --input-bg:rgba(255,255,255,.06); --grid:#262a35;
   --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500; --c5:#d55181; --c6:#008300; --c7:#9085e9; --c8:#e66767; --c-other:#6f6e69;
+  --env-desp:#d95926; --env-obj:#9085e9; --env-pg:#199e70;
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -69,7 +73,7 @@ img,svg{max-width:100%;}
 #app{
   width:100%; max-width:30rem; margin-inline:auto;
   padding-left:calc(var(--gutter) + var(--safe-l)); padding-right:calc(var(--gutter) + var(--safe-r));
-  padding-bottom:calc(var(--tabbar-h) + var(--safe-b) + 1.5rem);
+  padding-bottom:calc(var(--tabbar-h) + var(--safe-b) + 5.5rem);
   min-height:100vh; min-height:100dvh;
 }
 .shell{min-width:0;}
@@ -77,7 +81,7 @@ img,svg{max-width:100%;}
 @media (min-width:900px){
   #app{
     max-width:68.75rem; display:grid; grid-template-columns:12.5rem minmax(0,1fr); gap:clamp(1rem,2.5vw,2rem);
-    align-items:start; padding-bottom:calc(2rem + var(--safe-b));
+    align-items:start; padding-bottom:calc(5.5rem + var(--safe-b));
   }
 }
 
@@ -140,8 +144,15 @@ h1{font-size:clamp(1.4rem, 1.15rem + 1.2vw, 1.85rem); margin:0; letter-spacing:-
 .hero-lbl{font-size:.8125rem; color:var(--text-dim); font-weight:600;}
 .hero-head{display:flex; align-items:center; justify-content:space-between; gap:.5rem; margin-top:-.375rem;}
 .hero{font-size:2.25rem; font-size:clamp(1.75rem, 14cqi, 3rem); font-weight:800; letter-spacing:-.03em; line-height:1.1; margin:.125rem 0 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.hero-meta{font-size:.75rem; color:var(--text-dim); margin:.25rem 0 .875rem; min-height:1em;}
-.opening-hint{display:grid; gap:.5rem; font-size:.8125rem; color:var(--text-dim); background:var(--input-bg); border-radius:.75rem; padding:.625rem .75rem; margin:.5rem 0 .875rem;}
+.hero-meta{font-size:.75rem; color:var(--text-dim); margin:.125rem 0 0; min-height:1em;}
+.total-line{font-size:1.5rem; font-size:clamp(1.25rem, 9cqi, 1.85rem); font-weight:800; letter-spacing:-.02em; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.env-main{margin-top:.75rem; padding:.75rem .875rem; border-radius:.875rem; background:color-mix(in srgb, var(--env-pg) 12%, var(--input-bg));}
+.env-lbl{display:flex; align-items:center; font-size:.8125rem; color:var(--text-dim); font-weight:600; min-width:0;}
+.env-main .hero{font-size:2rem; font-size:clamp(1.5rem, 11cqi, 2.75rem);}
+.env-grid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:.5rem; margin:.5rem 0 .75rem;}
+.env-tile{background:var(--input-bg); border-radius:.875rem; padding:.625rem .75rem; min-width:0;}
+.env-tile b{display:block; font-size:1.05rem; margin-top:.125rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.opening-hint{display:grid; gap:.5rem; font-size:.8125rem; color:var(--text-dim); background:var(--input-bg); border-radius:.75rem; padding:.625rem .75rem; margin:.5rem 0 0;}
 .opening-hint .btn-soft{width:100%; color:var(--accent);}
 .split-bar{display:flex; gap:2px; height:.625rem; border-radius:999px; overflow:hidden; background:var(--track);}
 .split-bar span{display:block; height:100%;}
@@ -200,6 +211,22 @@ details.values summary{cursor:pointer; min-height:44px; display:flex; align-item
 .badge{font-size:.6875rem; font-weight:700; padding:.125rem .5rem; border-radius:999px; background:var(--input-bg); color:var(--text-dim); letter-spacing:.02em; white-space:nowrap;}
 .badge.rec{color:var(--accent); background:color-mix(in srgb, var(--accent) 14%, var(--input-bg));}
 .badge.mandatory{color:var(--warn); background:color-mix(in srgb, var(--warn) 15%, var(--input-bg)); text-transform:uppercase;}
+.alloc-chips{display:flex; flex-wrap:wrap; gap:.25rem .375rem; margin-top:.375rem;}
+.chip{display:inline-flex; align-items:center; max-width:100%; font-size:.75rem; color:var(--text-dim); background:var(--input-bg); border-radius:999px; padding:.125rem .5rem; white-space:nowrap;}
+.day-head{display:flex; justify-content:space-between; gap:.5rem; font-size:.75rem; font-weight:700; color:var(--text-dim); letter-spacing:.04em; padding:.875rem 0 .25rem;}
+.day-head:first-child{padding-top:0;}
+.day-head + .mov-row{border-top:none;}
+.pay-btn{display:inline-flex; align-items:center; gap:.375rem; min-height:44px; max-width:100%; margin-top:.375rem; padding:.375rem .875rem; border-radius:999px;
+  border:1px dashed color-mix(in srgb, var(--accent) 55%, transparent); background:none; color:var(--accent); font-size:.8125rem; font-weight:700; text-align:left;}
+.pay-btn.paid{border-style:solid; border-color:color-mix(in srgb, var(--income) 45%, transparent); background:color-mix(in srgb, var(--income) 12%, transparent); color:var(--text);}
+.kv{display:flex; justify-content:space-between; align-items:center; gap:.75rem; padding:.375rem 0; border-top:1px solid var(--card-border); font-size:.9375rem;}
+.kv:first-child,.card-title + .kv{border-top:none;}
+.kv > span{display:flex; align-items:center; color:var(--text-dim); min-width:0;}
+.kv.big b{font-size:1.35rem;}
+.cat-line{display:grid; grid-template-columns:minmax(0,1fr) auto auto; align-items:center; gap:.375rem; padding:.25rem 0; border-top:1px solid var(--card-border);}
+.cat-line:first-of-type{border-top:none;}
+.cat-line .nm{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600;}
+.hist-list{margin-top:.5rem;}
 
 .cat-card{margin-bottom:.75rem;}
 .cat-head{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.25rem .5rem; margin-bottom:.25rem;}
@@ -210,13 +237,6 @@ details.values summary{cursor:pointer; min-height:44px; display:flex; align-item
 .cat-actions button{background:var(--input-bg); border:1px solid var(--card-border); color:var(--text-dim); min-width:44px; min-height:44px; border-radius:.75rem; font-size:.9375rem;}
 .add-btn{width:100%; min-height:44px; margin-top:.5rem; background:var(--input-bg); border:1px dashed var(--card-border); color:var(--accent); border-radius:.75rem; padding:.625rem; font-size:.875rem; font-weight:700;}
 
-.rec-income{display:grid; gap:.5rem;}
-.rec-item{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.25rem .75rem;}
-.rec-item .src{font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.rec-item .since{font-size:.75rem; color:var(--text-faint);}
-.rec-item .amt{font-size:1.5rem; font-size:clamp(1.25rem, 1rem + 2vw, 1.75rem); font-weight:800; color:var(--income); letter-spacing:-.02em;}
-.btn-row{display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; grid-column:1 / -1;}
-.btn-row button{flex:1 1 7rem;}
 .btn-soft{background:var(--input-bg); border:1px solid var(--card-border); border-radius:.75rem; min-height:44px; padding:.5rem .75rem; font-size:.875rem; color:var(--text-dim); font-weight:700;}
 
 .bucket-card{margin-bottom:.75rem;}
@@ -227,7 +247,7 @@ details.values summary{cursor:pointer; min-height:44px; display:flex; align-item
 .fill{height:100%; border-radius:6px; background:linear-gradient(90deg,var(--accent),var(--accent-2)); box-shadow:var(--glow) var(--accent);}
 .bucket-nums{display:flex; flex-wrap:wrap; justify-content:space-between; gap:.25rem .75rem; font-size:.75rem; color:var(--text-faint);}
 .bucket-actions{display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.625rem;}
-.bucket-actions button{flex:1 1 5.5rem; background:var(--input-bg); border:1px solid var(--card-border); border-radius:.75rem; min-height:44px; padding:.5rem; font-size:.8125rem; color:var(--text-dim); font-weight:700;}
+.bucket-actions button{flex:1 1 7rem; background:var(--input-bg); border:1px solid var(--card-border); border-radius:.75rem; min-height:44px; padding:.5rem; font-size:.8125rem; color:var(--text-dim); font-weight:700;}
 .invite-row{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.5rem; padding:.625rem 0; border-top:1px solid var(--card-border); font-size:.875rem;}
 .invite-row code{background:var(--input-bg); padding:.25rem .5rem; border-radius:.5rem; font-size:.875rem; overflow-wrap:anywhere;}
 .invite-row .used{color:var(--text-faint); font-size:.75rem;}
@@ -247,6 +267,12 @@ details.values summary{cursor:pointer; min-height:44px; display:flex; align-item
 .tab.active{color:var(--accent);}
 .tab .ic{font-size:1.25rem; line-height:1;}
 .nav-brand{display:none;}
+.tab.desk-only{display:none;}
+.fab{
+  position:fixed; z-index:35; right:calc(var(--gutter) + var(--safe-r)); bottom:calc(var(--tabbar-h) + var(--safe-b) + .75rem);
+  min-height:3.25rem; padding:.75rem 1.25rem; border:none; border-radius:999px; font-size:1rem; font-weight:800; color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow:0 8px 24px color-mix(in srgb, var(--accent) 40%, transparent);
+}
 @media (min-width:900px){
   .tabbar{
     position:sticky; top:calc(1rem + var(--safe-t)); bottom:auto; left:auto; right:auto; flex-direction:column; justify-content:flex-start; gap:.25rem;
@@ -257,6 +283,9 @@ details.values summary{cursor:pointer; min-height:44px; display:flex; align-item
   .tab.active{background:color-mix(in srgb, var(--accent) 12%, transparent);}
   .topbar{margin-inline:0; padding-inline:0; background:none; backdrop-filter:none; -webkit-backdrop-filter:none; position:static;}
   .topbar .brand{display:none;}
+  .tab.desk-only{display:flex;}
+  .settings-btn{display:none;}
+  .fab{bottom:calc(1.5rem + var(--safe-b)); right:calc(1.5rem + var(--safe-r));}
 }
 
 /* ---------- modais e formulários ---------- */
@@ -293,6 +322,24 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
 .amt-input{font-size:clamp(1.5rem, 1.2rem + 2vw, 1.75rem); font-weight:800; text-align:center;}
 .amt-row{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:.5rem; align-items:stretch;}
 .sign-btn{min-width:3.25rem; min-height:44px; background:var(--input-bg); border:1px solid var(--card-border); border-radius:.75rem; font-size:1.25rem; font-weight:800; color:var(--text);}
+.split-box{margin-top:1rem; padding:.75rem; border:1px solid var(--card-border); border-radius:1rem;}
+.split-title{font-size:.75rem; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:.04em; margin-bottom:.25rem;}
+.split-line{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,7.5rem); align-items:center; gap:.5rem; padding:.25rem 0;}
+.split-line label{display:flex; align-items:center; margin:0; min-width:0; text-transform:none; letter-spacing:0; font-size:.9375rem; font-weight:600; color:var(--text);}
+.split-input{text-align:right; font-weight:700;}
+@media (max-width:22.5rem){
+  .split-line{grid-template-columns:minmax(0,1fr) 5.75rem;}
+  .split-line label{font-size:.875rem;}
+  .split-input{padding-inline:.625rem;}
+}
+.split-hint{font-size:.75rem; color:var(--text-dim); margin:0 0 .375rem;}
+.split-line.ro{font-size:.875rem; color:var(--text-dim);}
+.split-line.ro b,.split-line.total b{text-align:right;}
+.split-line.total{border-top:1px solid var(--card-border); margin-top:.375rem; padding-top:.625rem; font-weight:800;}
+.split-line.total > span{display:flex; align-items:center;}
+.split-line.total b{font-size:1.15rem;}
+.split-box .err{text-align:left;}
+.btn-primary:disabled{opacity:.45; cursor:not-allowed;}
 .month-pick{display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); gap:.5rem;}
 .switch-row{display:flex; align-items:center; justify-content:space-between; gap:1rem; margin:1rem 0 0; min-height:44px; text-transform:none; letter-spacing:0; font-size:.9375rem; font-weight:600; color:var(--text); cursor:pointer;}
 .switch{appearance:none; -webkit-appearance:none; flex-shrink:0; width:3rem; min-width:3rem; height:1.75rem; min-height:0; padding:0; border-radius:999px; background:var(--track); border:1px solid var(--card-border); position:relative; cursor:pointer; transition:background .2s;}
@@ -314,10 +361,10 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
 .checkbox-row input{width:1.375rem; min-width:1.375rem; height:1.375rem; min-height:0; padding:0; -webkit-appearance:auto; appearance:auto; flex-shrink:0;}
 .checkbox-row label{margin:0; text-transform:none; font-size:.875rem; font-weight:500; color:var(--text); letter-spacing:0;}
 .toast{
-  position:fixed; left:50%; transform:translateX(-50%); bottom:calc(var(--tabbar-h) + var(--safe-b) + 1rem); z-index:60;
+  position:fixed; left:50%; transform:translateX(-50%); bottom:calc(var(--tabbar-h) + var(--safe-b) + 4.75rem); z-index:60;
   width:max-content; max-width:calc(100% - 2rem); background:var(--text); color:var(--bg); padding:.75rem 1rem; border-radius:.875rem; font-size:.875rem; box-shadow:var(--shadow);
 }
-@media (min-width:900px){ .toast{bottom:calc(1.5rem + var(--safe-b));} }
+@media (min-width:900px){ .toast{bottom:calc(5.5rem + var(--safe-b));} }
 /* no topo, para não tapar os botões de um formulário aberto */
 .update-bar{
   position:fixed; left:50%; transform:translateX(-50%); top:calc(var(--safe-t) + .75rem); z-index:60;
@@ -386,9 +433,10 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
     <div class="nav-brand">💠 Finanças</div>
     <button class="tab active" data-v="dashboard" onclick="switchView('dashboard')"><span class="ic">◈</span><span class="tl">Início</span></button>
     <button class="tab" data-v="income" onclick="switchView('income')"><span class="ic">⊕</span><span class="tl">Receitas</span></button>
-    <button class="tab" data-v="expenses" onclick="switchView('expenses')"><span class="ic">⊖</span><span class="tl">Despesas</span></button>
+    <button class="tab" data-v="spendings" onclick="switchView('spendings')"><span class="ic">⊖</span><span class="tl">Gastos</span></button>
+    <button class="tab" data-v="bills" onclick="switchView('bills')"><span class="ic">≣</span><span class="tl">Contas</span></button>
     <button class="tab" data-v="buckets" onclick="switchView('buckets')"><span class="ic">◎</span><span class="tl">Objetivos</span></button>
-    <button class="tab" data-v="settings" onclick="switchView('settings')"><span class="ic">⚙</span><span class="tl">Definições</span></button>
+    <button class="tab desk-only" data-v="settings" onclick="switchView('settings')"><span class="ic">⚙</span><span class="tl">Definições</span></button>
   </nav>
 
   <div class="shell">
@@ -398,7 +446,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
           <h1 class="brand">Finanças</h1>
           <div class="sub" id="header-sub">—</div>
         </div>
-        <button class="icon-btn" onclick="doLogout()" title="Sair" aria-label="Sair">⎋</button>
+        <button class="icon-btn settings-btn" onclick="switchView('settings')" title="Definições" aria-label="Definições">⚙</button>
       </div>
       <div class="month-nav" id="month-nav">
         <button onclick="shiftMonth(-1)" aria-label="Mês anterior">‹</button>
@@ -417,17 +465,21 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
             <div class="hero-lbl">Saldo total</div>
             <button class="icon-btn" onclick="openOpeningModal()" title="Saldo inicial" aria-label="Editar saldo inicial">✎</button>
           </div>
-          <div class="hero money" id="d-saldo">0,00 €</div>
+          <div class="total-line money" id="d-saldo">0,00 €</div>
           <div class="hero-meta" id="d-since"></div>
           <div class="opening-hint hidden" id="d-opening-hint">
             <span>Define o teu saldo inicial para o saldo refletir o dinheiro real da conta.</span>
             <button class="btn-soft" onclick="openOpeningModal()">Definir saldo inicial</button>
           </div>
-          <div class="split-bar" id="d-split" aria-hidden="true"></div>
-          <div class="split-legend">
-            <div><span class="dot" style="background:var(--accent)"></span>Poupado<b class="money" id="d-poupado">0,00 €</b></div>
-            <div><span class="dot" style="background:var(--accent-2)"></span>Disponível<b class="money" id="d-disponivel">0,00 €</b></div>
+          <div class="env-main">
+            <div class="env-lbl"><span class="dot" style="background:var(--env-pg)"></span>Para gastar</div>
+            <div class="hero money" id="d-pg">0,00 €</div>
           </div>
+          <div class="env-grid">
+            <div class="env-tile"><div class="env-lbl"><span class="dot" style="background:var(--env-desp)"></span>Despesas</div><b class="money" id="d-env-desp">0,00 €</b></div>
+            <div class="env-tile"><div class="env-lbl"><span class="dot" style="background:var(--env-obj)"></span>Objetivos</div><b class="money" id="d-env-obj">0,00 €</b></div>
+          </div>
+          <div class="split-bar" id="d-split" aria-hidden="true"></div>
           <div class="note hidden" id="d-note"></div>
         </section>
 
@@ -435,22 +487,22 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
           <div class="card-title" id="d-month-title">Este mês</div>
           <div class="stats-grid">
             <div class="stat-tile"><div class="lbl">Recebido</div><div class="val pos money" id="d-recebido">0,00 €</div></div>
+            <div class="stat-tile"><div class="lbl">Contas pagas</div><div class="val neg money" id="d-pago">0,00 €</div></div>
             <div class="stat-tile"><div class="lbl">Gasto</div><div class="val neg money" id="d-gasto">0,00 €</div></div>
-            <div class="stat-tile"><div class="lbl">Contribuições</div><div class="val acc money" id="d-contrib">0,00 €</div></div>
-            <div class="stat-tile"><div class="lbl">Pronto a gastar</div><div class="val pos money" id="d-pronto">0,00 €</div></div>
+            <div class="stat-tile"><div class="lbl">Por pagar</div><div class="val money" id="d-porpagar">0,00 €</div></div>
           </div>
         </section>
 
         <section class="card d-donut">
-          <div class="card-title">Despesas por categoria</div>
+          <div class="card-title">Saídas por categoria</div>
           <div id="d-donut"></div>
         </section>
 
         <section class="card d-bars">
-          <div class="card-title">Receitas vs despesas · 6 meses</div>
+          <div class="card-title">Receitas vs saídas · 6 meses</div>
           <div class="chart-legend">
             <span><span class="dot" style="background:var(--c1)"></span>Receitas</span>
-            <span><span class="dot" style="background:var(--c2)"></span>Despesas</span>
+            <span><span class="dot" style="background:var(--c2)"></span>Saídas (contas + gastos)</span>
           </div>
           <div class="bars" id="d-bars"></div>
           <details class="values"><summary>Ver valores</summary><div id="d-bars-table"></div></details>
@@ -465,33 +517,52 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
 
     <!-- RECEITAS -->
     <main class="view hidden" id="view-income">
-      <div class="view-head"><h2>Receitas</h2><div class="sub">Rendimento mensal e outras entradas</div></div>
-      <section class="card">
-        <div class="card-title">Rendimento mensal</div>
-        <div id="rec-income"></div>
-      </section>
-      <button class="btn-primary" style="margin-top:0" onclick="openIncomeModal()">+ Nova receita</button>
-      <div class="sec-title"><span id="inc-list-title">Movimentos</span><span class="money pos" id="inc-list-total"></span></div>
+      <div class="view-head"><h2>Receitas</h2><div class="sub">Cada recibo reparte-se por Despesas, Objetivos e Para gastar</div></div>
+      <button class="btn-primary" style="margin-top:0" onclick="openIncomeModal()">＋ Receber dinheiro</button>
+      <div class="sec-title"><span id="inc-list-title">Recebido</span><span class="money pos" id="inc-list-total"></span></div>
       <div class="card" id="income-list"></div>
     </main>
 
-    <!-- DESPESAS -->
-    <main class="view hidden" id="view-expenses">
-      <div class="view-head"><h2>Despesas</h2><div class="sub">Organizadas por categoria</div></div>
+    <!-- GASTOS -->
+    <main class="view hidden" id="view-spendings">
+      <div class="view-head"><h2>Gastos</h2><div class="sub">O dia a dia sai do envelope Para gastar</div></div>
+      <div class="card">
+        <div class="kv big"><span>Para gastar agora</span><b class="money" id="sp-pg">0,00 €</b></div>
+        <div class="kv"><span id="sp-month-lbl">Gasto no mês</span><b class="money" id="sp-month">0,00 €</b></div>
+      </div>
+      <button class="btn-primary" style="margin-top:0" onclick="openSpendingModal()">＋ Gasto</button>
+      <div class="sec-title"><span id="sp-list-title">Gastos</span></div>
+      <div class="card" id="spending-list"></div>
+    </main>
+
+    <!-- CONTAS -->
+    <main class="view hidden" id="view-bills">
+      <div class="view-head"><h2>Contas</h2><div class="sub">Despesas fixas, pagas pelo envelope Despesas</div></div>
+      <div class="card">
+        <div class="card-title" id="b-title">Contas do mês</div>
+        <div class="kv"><span>Planeado</span><b class="money" id="b-plan">0,00 €</b></div>
+        <div class="kv"><span>Pago</span><b class="money" id="b-paid">0,00 €</b></div>
+        <div class="kv"><span>Por pagar</span><b class="money" id="b-due">0,00 €</b></div>
+        <div class="kv"><span><span class="dot" style="background:var(--env-desp)"></span>No envelope Despesas</span><b class="money" id="b-env">0,00 €</b></div>
+      </div>
       <div id="categories-list"></div>
-      <button class="btn-primary" onclick="openCategoryModal()">+ Nova categoria</button>
+      <button class="btn-primary" onclick="openCategoryModal()">＋ Nova categoria</button>
     </main>
 
     <!-- OBJETIVOS -->
     <main class="view hidden" id="view-buckets">
-      <div class="view-head"><h2>Poupanças e objetivos</h2><div class="sub">Fundo de emergência, poupança obrigatória, objetivos e mais</div></div>
+      <div class="view-head"><h2>Objetivos</h2><div class="sub">Depositar tira do Para gastar; levantar devolve</div></div>
+      <div class="card">
+        <div class="kv"><span><span class="dot" style="background:var(--env-pg)"></span>Para gastar</span><b class="money" id="bk-pg">0,00 €</b></div>
+        <div class="kv"><span><span class="dot" style="background:var(--env-obj)"></span>Total nos objetivos</span><b class="money" id="bk-total">0,00 €</b></div>
+      </div>
       <div id="buckets-list"></div>
-      <button class="btn-primary" onclick="openBucketModal()">+ Novo objetivo</button>
+      <button class="btn-primary" onclick="openBucketModal()">＋ Novo objetivo</button>
     </main>
 
     <!-- DEFINIÇÕES -->
     <main class="view hidden" id="view-settings">
-      <div class="view-head"><h2>Definições</h2><div class="sub">Conta e convites</div></div>
+      <div class="view-head"><h2>Definições</h2><div class="sub">Conta, saldo inicial e convites</div></div>
       <div class="card">
         <div class="card-title">Saldo inicial</div>
         <div id="opening-settings"></div>
@@ -501,8 +572,14 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
         <button class="btn-primary" style="margin-top:0" onclick="createInvite()">Gerar código de convite</button>
         <div id="invites-list"></div>
       </div>
+      <div class="card">
+        <div class="card-title">Sessão</div>
+        <button class="btn-soft" style="width:100%" onclick="doLogout()">⎋ Terminar sessão</button>
+      </div>
     </main>
   </div>
+
+  <button class="fab" id="fab" onclick="openSpendingModal()" aria-label="Registar um gasto">＋ Gasto</button>
 </div>
 
 <div id="modal-root"></div>
@@ -514,9 +591,10 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
 
 <script>
 const TOKEN_KEY = 'financas_token';
+const LAST_CAT_KEY = 'financas_ultima_categoria';
 const API = '/api';
 
-const ICONS_CAT = ['🏠','🚗','🏍️','🛡️','💳','🎮','🛒','💊','📱','🎓','✈️','🐾','📦'];
+const ICONS_CAT = ['🏠','🚗','🍔','🛒','☕','⛽','💡','📱','💳','🛡️','💊','🎮','👕','🎓','✈️','🐾','🏍️','📦'];
 const ICONS_BUCKET = ['🚨','🔒','🎯','✈️','🏠','🚗','💍','🎓','💻','🐷'];
 const KINDS = [
   {k:'emergencia', l:'Emergência'},
@@ -524,14 +602,20 @@ const KINDS = [
   {k:'objetivo', l:'Objetivo'},
   {k:'livre', l:'Livre'},
 ];
-const SOURCES = ['Salário','Venda','Extra','Subsídio','Reembolso','Juros'];
+const SOURCES = ['Salário','Subsídio','Venda','Extra','Reembolso','Juros'];
 const MONTHS = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const MONTHS_SHORT = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 const CHART_SLOTS = 8;
+const ENVELOPES = [
+  {k:'despesas', l:'Despesas', c:'--env-desp'},
+  {k:'objetivos', l:'Objetivos', c:'--env-obj'},
+  {k:'para_gastar', l:'Para gastar', c:'--env-pg'},
+];
 
 let categories = [];
 let buckets = [];
 let incomes = [];
+let spendings = [];
 let summary = null;
 let currentUser = null;
 let currentView = 'dashboard';
@@ -545,7 +629,7 @@ function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','
 function fmt(n){
   n = Number(n) || 0;
   const [i, d] = Math.abs(n).toFixed(2).split('.');
-  return (n < 0 && Math.abs(n) >= 0.005 ? '−' : '') + i.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ',' + d + ' €';
+  return (n < 0 && Math.abs(n) >= 0.005 ? '−' : '') + i.replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0') + ',' + d + '\u00a0€';
 }
 function compact(v){
   if(v >= 1e6) return (v/1e6).toLocaleString('pt-PT', {maximumFractionDigits:1}) + ' M';
@@ -560,7 +644,10 @@ function parseMoney(s){
   const n = parseFloat(s);
   return Number.isFinite(n) ? Math.round(n*100)/100 : NaN;
 }
+// contas de somar e comparar em cêntimos inteiros (0,10 + 0,20 tem de dar 0,30)
+function cents(n){ return Math.round(Number(n) * 100); }
 function moneyInputValue(n){ return n == null || n === '' ? '' : String(n).replace('.', ','); }
+function centsInput(c){ return c ? (c/100).toFixed(2).replace('.', ',') : ''; }
 function pad2(n){ return String(n).padStart(2, '0'); }
 function todayISO(){ const t = new Date(); return `${t.getFullYear()}-${pad2(t.getMonth()+1)}-${pad2(t.getDate())}`; }
 function currentMonthKey(){ return todayISO().slice(0, 7); }
@@ -574,6 +661,13 @@ function monthShort(key){ return MONTHS_SHORT[Number(key.split('-')[1]) - 1]; }
 // data por defeito de um movimento novo: hoje, ou o dia 1 se estivermos a ver outro mês
 function defaultDate(){ return month === currentMonthKey() ? todayISO() : month + '-01'; }
 function sum(list, f){ return list.reduce((s, x) => s + (Number(f ? f(x) : x) || 0), 0); }
+// um movimento com esta data já mexe nos envelopes? (entre o saldo inicial e hoje)
+function countsNow(iso){ return iso <= todayISO() && (!summary.opening_defined || iso >= summary.opening_date); }
+function setMoney(id, v, markNeg){
+  const el = $(id);
+  el.textContent = fmt(v);
+  if(markNeg) el.classList.toggle('neg', v < 0);
+}
 
 function toast(msg){
   const el = $('toast');
@@ -686,10 +780,10 @@ async function boot(){
 
 async function loadAll(){
   const q = '?month=' + month;
-  const [incs, cats, bks, sum_] = await Promise.all([
-    api('/income-entries'+q), api('/categories'+q), api('/buckets'), api('/summary'+q)
+  const [incs, sps, cats, bks, sum_] = await Promise.all([
+    api('/income-entries'+q), api('/spendings'+q), api('/categories'+q), api('/buckets'), api('/summary'+q)
   ]);
-  incomes = incs; categories = cats; buckets = bks; summary = sum_;
+  incomes = incs; spendings = sps; categories = cats; buckets = bks; summary = sum_;
   renderAll();
 }
 
@@ -715,6 +809,7 @@ function switchView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.add('hidden'));
   $('view-'+v).classList.remove('hidden');
   document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active', el.dataset.v===v));
+  $('fab').classList.toggle('hidden', v==='settings');
   renderMonthNav();
   if(v==='dashboard' && summary) renderBars();
   if(v==='settings') renderInvites();
@@ -725,36 +820,36 @@ function renderAll(){
   renderMonthNav();
   renderDashboard();
   renderIncome();
-  renderCategories();
+  renderSpendings();
+  renderBills();
   renderBuckets();
   renderOpeningSettings();
 }
 
 // ---------- INÍCIO ----------
 function renderDashboard(){
-  const s = summary;
-  $('d-saldo').textContent = fmt(s.saldo_total);
-  $('d-saldo').classList.toggle('neg', s.saldo_total < 0);
+  const s = summary, e = s.envelopes;
+  setMoney('d-saldo', s.saldo_total, true);
   $('d-since').textContent = s.opening_defined ? 'desde ' + fmtDate(s.opening_date) : '';
   $('d-since').classList.toggle('hidden', !s.opening_defined);
   $('d-opening-hint').classList.toggle('hidden', s.opening_defined);
-  $('d-poupado').textContent = fmt(s.total_poupado);
-  $('d-disponivel').textContent = fmt(s.disponivel);
-  const p = Math.max(s.total_poupado, 0), d = Math.max(s.disponivel, 0), tot = p + d;
+  setMoney('d-pg', e.para_gastar, true);
+  setMoney('d-env-desp', e.despesas, true);
+  setMoney('d-env-obj', e.objetivos, true);
+  const parts = ENVELOPES.map(x => ({...x, v: Math.max(e[x.k], 0)}));
+  const tot = sum(parts, p => p.v);
   $('d-split').innerHTML = tot > 0
-    ? `<span style="width:${p/tot*100}%;background:var(--accent)"></span><span style="width:${d/tot*100}%;background:var(--accent-2)"></span>`
+    ? parts.filter(p => p.v > 0).map(p => `<span style="width:${p.v/tot*100}%;background:var(${p.c})"></span>`).join('')
     : '';
-  const note = $('d-note');
-  note.classList.toggle('hidden', s.disponivel >= 0);
-  note.textContent = s.disponivel < 0 ? 'O total guardado nos objetivos é maior do que o saldo registado.' : '';
+  const negative = ENVELOPES.filter(x => e[x.k] < 0).map(x => x.l);
+  $('d-note').classList.toggle('hidden', !negative.length);
+  $('d-note').textContent = negative.length ? `Atenção: ${negative.join(' e ')} ${negative.length > 1 ? 'estão negativos' : 'está negativo'}.` : '';
 
   $('d-month-title').textContent = month === currentMonthKey() ? 'Este mês' : monthLabel(month);
-  $('d-recebido').textContent = fmt(s.recebido);
-  $('d-gasto').textContent = fmt(s.gasto);
-  $('d-contrib').textContent = fmt(s.contribuicoes_mensais);
-  $('d-pronto').textContent = fmt(s.pronto_a_gastar);
-  $('d-pronto').classList.toggle('pos', s.pronto_a_gastar >= 0);
-  $('d-pronto').classList.toggle('neg', s.pronto_a_gastar < 0);
+  setMoney('d-recebido', s.recebido);
+  setMoney('d-pago', s.pago_contas);
+  setMoney('d-gasto', s.gasto_dia_a_dia);
+  setMoney('d-porpagar', s.por_pagar);
 
   renderDonut();
   renderBars();
@@ -766,14 +861,15 @@ function renderDonut(){
   const el = $('d-donut');
   const data = summary.por_categoria;
   if(!data.length){
-    el.innerHTML = `<div class="empty"><div class="empty-ic">🌱</div>Sem despesas em ${esc(monthLabel(month).toLowerCase())}.<br>Nada a apontar por aqui.</div>`;
+    el.innerHTML = `<div class="empty"><div class="empty-ic">🌱</div>Sem saídas em ${esc(monthLabel(month).toLowerCase())}.<br>Nada a apontar por aqui.</div>`;
     return;
   }
-  const slotOf = (id) => categories.findIndex(c => c.id === id);
+  const slotOf = (id) => id ? categories.findIndex(c => c.id === id) : -1;
   const items = [], rest = [];
   data.forEach(d => { const slot = slotOf(d.id); (slot >= 0 && slot < CHART_SLOTS ? items : rest).push({...d, slot}); });
   items.sort((a, b) => a.slot - b.slot);
-  if(rest.length) items.push({nome:'Outras', icone:'…', total:sum(rest, r=>r.total), slot:-1});
+  if(rest.length === 1) items.push({...rest[0], slot:-1});
+  else if(rest.length) items.push({nome:'Outras', icone:'…', total:sum(rest, r=>r.total), slot:-1});
   const total = sum(items, i=>i.total);
   const color = (i) => i.slot < 0 ? 'var(--c-other)' : `var(--c${i.slot+1})`;
   const pct = (v) => { const p = v/total*100; return p > 0 && p < 1 ? '<1%' : Math.round(p) + '%'; };
@@ -793,10 +889,10 @@ function renderDonut(){
   const fs = Math.min(13, 66 / (totalTxt.length * 0.56));
 
   el.innerHTML = `<div class="donut-wrap">
-    <svg class="donut" viewBox="0 0 120 120" role="img" aria-label="Despesas por categoria: total ${esc(totalTxt)}">
+    <svg class="donut" viewBox="0 0 120 120" role="img" aria-label="Saídas por categoria: total ${esc(totalTxt)}">
       ${segs}
       <text x="60" y="${60 + fs*0.2}" text-anchor="middle" class="d-total" style="font-size:${fs.toFixed(2)}px">${esc(totalTxt)}</text>
-      <text x="60" y="${60 + fs*0.2 + 11}" text-anchor="middle" class="d-sub">gasto no mês</text>
+      <text x="60" y="${60 + fs*0.2 + 11}" text-anchor="middle" class="d-sub">saídas no mês</text>
     </svg>
     <ul class="legend">
       ${items.map(i => `<li><span class="sw" style="background:${color(i)}"></span><span class="nm" title="${esc(i.nome)}">${esc(i.icone||'')} ${esc(i.nome)}</span><span class="money">${fmt(i.total)}</span><span class="pc">${pct(i.total)}</span></li>`).join('')}
@@ -815,9 +911,9 @@ function niceMax(v){
 function renderBars(){
   const el = $('d-bars');
   const hist = summary.historico;
-  const max = niceMax(Math.max(...hist.map(h=>Math.max(h.recebido, h.gasto))));
-  $('d-bars-table').innerHTML = `<table class="vtable"><thead><tr><th>Mês</th><th>Receitas</th><th>Despesas</th></tr></thead><tbody>
-    ${hist.map(h=>`<tr><td>${esc(monthShort(h.mes))} ${h.mes.slice(0,4)}</td><td>${fmt(h.recebido)}</td><td>${fmt(h.gasto)}</td></tr>`).join('')}</tbody></table>`;
+  const max = niceMax(Math.max(...hist.map(h=>Math.max(h.recebido, h.saidas))));
+  $('d-bars-table').innerHTML = `<table class="vtable"><thead><tr><th>Mês</th><th>Receitas</th><th>Saídas</th></tr></thead><tbody>
+    ${hist.map(h=>`<tr><td>${esc(monthShort(h.mes))} ${h.mes.slice(0,4)}</td><td>${fmt(h.recebido)}</td><td>${fmt(h.saidas)}</td></tr>`).join('')}</tbody></table>`;
   if(max === 0){ el.innerHTML = '<div class="empty">Sem movimentos nos últimos 6 meses.</div>'; return; }
 
   const W = Math.max(240, Math.round(el.clientWidth || 320)), H = 180;
@@ -840,19 +936,20 @@ function renderBars(){
     const cx = padL + i*band + band/2;
     const name = `${monthShort(h.mes)} ${h.mes.slice(0,4)}`;
     out += bar(cx - bw - 1, h.recebido, 'var(--c1)', `Receitas ${name}`);
-    out += bar(cx + 1, h.gasto, 'var(--c2)', `Despesas ${name}`);
+    out += bar(cx + 1, h.saidas, 'var(--c2)', `Saídas ${name}`);
     out += `<text class="ax${h.mes===month?' cur':''}" x="${cx}" y="${H-6}" text-anchor="middle">${monthShort(h.mes)}</text>`;
   });
-  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Receitas e despesas dos últimos 6 meses (valores em euros)">${out}</svg>`;
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Receitas e saídas dos últimos 6 meses (valores em euros)">${out}</svg>`;
 }
 
 function renderGoals(){
   const el = $('d-goals');
-  if(!buckets.length){ el.innerHTML = '<div class="empty" style="padding:1rem">Sem objetivos ainda.</div>'; return; }
-  el.innerHTML = buckets.map(b => {
+  const active = buckets.filter(b => !b.archived);
+  if(!active.length){ el.innerHTML = '<div class="empty" style="padding:1rem">Sem objetivos ainda.</div>'; return; }
+  el.innerHTML = active.map(b => {
     const pct = bucketProgress(b);
     return `<div class="goal-row">
-      <div class="gh"><span class="nm" title="${esc(b.name)}">${esc(b.icon)} ${esc(b.name)}</span><span class="pc money">${pct!==null ? Math.round(pct*100)+'%' : fmt(b.current_amount)}</span></div>
+      <div class="gh"><span class="nm" title="${esc(b.name)}">${esc(b.icon)} ${esc(b.name)}</span><span class="pc money">${fmt(b.current_amount)}${pct!==null ? ' · ' + Math.round(pct*100) + '%' : ''}</span></div>
       ${pct!==null ? `<div class="track"><div class="fill" style="width:${pct*100}%"></div></div>` : ''}
     </div>`;
   }).join('');
@@ -862,9 +959,9 @@ function renderGoals(){
 function renderOpeningSettings(){
   const s = summary;
   $('opening-settings').innerHTML = s.opening_defined
-    ? `<div><b class="money">${fmt(s.opening_balance)}</b> <span class="sub">no início de ${fmtDate(s.opening_date)}</span></div>
+    ? `<div><b class="money">${fmt(s.opening_balance)}</b> <span class="sub">livres (Para gastar) no início de ${fmtDate(s.opening_date)}</span></div>
        <button class="btn-soft" style="width:100%; margin-top:.75rem" onclick="openOpeningModal()">Editar saldo inicial</button>`
-    : `<div class="sub">Ainda não definido: o saldo conta todos os movimentos desde o primeiro registo.</div>
+    : `<div class="sub">Ainda não definido: os envelopes contam todos os movimentos desde zero.</div>
        <button class="btn-soft" style="width:100%; margin-top:.75rem" onclick="openOpeningModal()">Definir saldo inicial</button>`;
 }
 
@@ -872,14 +969,14 @@ function openOpeningModal(){
   const s = summary || {};
   showModal(`
     <h2>Saldo inicial</h2>
-    <label for="ob-amount">Saldo na conta</label>
+    <label for="ob-amount">Dinheiro livre (Para gastar)</label>
     <div class="amt-row">
       <input id="ob-amount" class="amt-input" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" value="${esc(s.opening_defined ? moneyInputValue(s.opening_balance) : '')}">
       <button type="button" class="sign-btn" onclick="toggleSign('ob-amount')" aria-label="Trocar o sinal (saldo negativo)" title="Saldo negativo">±</button>
     </div>
-    <label for="ob-date">A partir de</label>
+    <label for="ob-date">No início do dia</label>
     <input id="ob-date" type="date" max="${todayISO()}" value="${s.opening_defined ? s.opening_date : todayISO()}">
-    <p class="hint">Indica quanto tens na conta no início desse dia. Movimentos anteriores a essa data deixam de contar para o saldo, mas continuam no histórico.</p>
+    <p class="hint">Quanto tinhas livre na conta no início desse dia, sem contar o que já está guardado nos objetivos. Movimentos com data anterior ficam só no histórico: aparecem nos gráficos e listas, mas não mexem nos envelopes.</p>
     <button class="btn-primary" onclick="saveOpening()">Guardar</button>`);
 }
 // o teclado decimal do iPhone não tem sinal de menos
@@ -891,7 +988,7 @@ function saveOpening(){
   return run(async ()=>{
     const opening_balance = parseMoney($('ob-amount').value);
     const opening_date = $('ob-date').value;
-    if(!Number.isFinite(opening_balance)){ toast('Indica o saldo da conta (pode ser 0 ou negativo).'); return; }
+    if(!Number.isFinite(opening_balance)){ toast('Indica o dinheiro livre (pode ser 0 ou negativo).'); return; }
     if(!opening_date || opening_date > todayISO()){ toast('Indica uma data até hoje.'); return; }
     await api('/account', {method:'PUT', body: JSON.stringify({opening_balance, opening_date})});
     closeModal();
@@ -900,75 +997,104 @@ function saveOpening(){
 }
 
 // ---------- RECEITAS ----------
+function allocChips(e){
+  const parts = [e.despesas, sum(e.objetivos, o=>o.amount), e.para_gastar];
+  return ENVELOPES.map((x, i) => ({...x, v: parts[i]})).filter(x => x.v > 0)
+    .map(x => `<span class="chip"><span class="dot" style="background:var(${x.c})"></span>${x.l} ${fmt(x.v)}</span>`).join('');
+}
+
+function renderIncome(){
+  $('inc-list-title').textContent = 'Recebido em ' + monthLabel(month).toLowerCase();
+  $('inc-list-total').textContent = incomes.length ? fmt(sum(incomes, e=>e.amount)) : '';
+  const el = $('income-list');
+  if(!incomes.length){ el.innerHTML = '<div class="empty">Sem rendimentos neste mês.<br>Quando receberes, usa «Receber dinheiro».</div>'; return; }
+  el.innerHTML = incomes.map(e => `<div class="mov-row">
+    <div class="main">
+      <div class="t clamp2">${esc(e.source)}</div>
+      <div class="meta"><span>${fmtDate(e.date)}</span>${e.description ? `<span class="desc">${esc(e.description)}</span>` : ''}</div>
+      <div class="alloc-chips">${allocChips(e)}</div>
+    </div>
+    <div class="a money pos">${fmt(e.amount)}</div>
+    <button class="more-btn" onclick="openIncomeActions('${e.id}')" aria-label="Opções">⋯</button>
+  </div>`).join('');
+}
+
+// ---------- GASTOS ----------
+function renderSpendings(){
+  setMoney('sp-pg', summary.envelopes.para_gastar, true);
+  $('sp-month-lbl').textContent = 'Gasto em ' + monthLabel(month).toLowerCase();
+  setMoney('sp-month', summary.gasto_dia_a_dia);
+  $('sp-list-title').textContent = 'Gastos de ' + monthLabel(month).toLowerCase();
+  const el = $('spending-list');
+  if(!spendings.length){ el.innerHTML = '<div class="empty">Sem gastos neste mês.</div>'; return; }
+  const days = [];
+  spendings.forEach(sp => {
+    let d = days[days.length - 1];
+    if(!d || d.date !== sp.date){ d = {date: sp.date, items: []}; days.push(d); }
+    d.items.push(sp);
+  });
+  el.innerHTML = days.map(d => `<div class="day-head"><span>${fmtDate(d.date)}</span><span class="money">${fmt(sum(d.items, x=>x.amount))}</span></div>` +
+    d.items.map(sp => `<div class="mov-row">
+      <div class="main">
+        <div class="t clamp2">${esc(sp.description || sp.categoria || 'Gasto')}</div>
+        <div class="meta"><span>${esc(sp.icone || '🏷️')} ${esc(sp.categoria || 'Sem categoria')}</span></div>
+      </div>
+      <div class="a money neg">${fmt(sp.amount)}</div>
+      <button class="more-btn" onclick="openSpendingActions('${sp.id}')" aria-label="Opções">⋯</button>
+    </div>`).join('')).join('');
+}
+
+// ---------- CONTAS ----------
 function recurringMeta(e){
   return `desde ${fmtMonthOf(e.date)}${e.end_date ? ' até ' + fmtMonthOf(e.end_date) : ''}`;
 }
 
-function renderIncome(){
-  const rec = incomes.filter(e => e.is_recurring);
-  const recEl = $('rec-income');
-  if(!rec.length){
-    recEl.innerHTML = `<div class="sub" style="margin-bottom:.25rem">Ainda não há rendimento mensal neste mês.</div>
-      <button class="btn-soft" style="width:100%" onclick="openRecurringIncomeModal()">Definir rendimento mensal</button>`;
-  } else {
-    recEl.innerHTML = '<div class="rec-income">' + rec.map(e => `
-      <div class="rec-item">
-        <div style="min-width:0"><div class="src">${esc(e.source)}</div><div class="since">${recurringMeta(e)}</div></div>
-        <div class="amt money">${fmt(e.amount)}</div>
-        <div class="btn-row">
-          <button class="btn-soft" onclick="openChangeModal('inc','${e.id}')">Alterar valor</button>
-          <button class="btn-soft" onclick="openEndModal('inc','${e.id}')">Terminar</button>
-        </div>
-      </div>`).join('') + '</div>';
-  }
-
-  $('inc-list-title').textContent = 'Movimentos de ' + monthLabel(month).toLowerCase();
-  $('inc-list-total').textContent = incomes.length ? fmt(sum(incomes, e=>e.amount)) : '';
-  const el = $('income-list');
-  if(!incomes.length){ el.innerHTML = '<div class="empty">Sem receitas neste mês.</div>'; return; }
-  el.innerHTML = incomes.map(e => movRow({
-    title: e.source, desc: e.description, date: e.date, rec: e.is_recurring, amount: e.amount, cls: 'pos',
-    onMore: `openActions('inc','${e.id}')`, endDate: e.end_date,
-  })).join('');
-}
-
-function movRow(r){
+function billRow(e){
+  const p = e.payment;
+  const label = p
+    ? `✓ Paga · ${fmtDate(p.paid_date)}${cents(p.amount) !== cents(e.amount) ? ' · ' + fmt(p.amount) : ''}`
+    : 'Marcar como paga';
   return `<div class="mov-row">
     <div class="main">
-      <div class="t clamp2">${esc(r.title)}</div>
-      <div class="meta">
-        <span>${r.rec ? recurringMeta({date:r.date, end_date:r.endDate}) : fmtDate(r.date)}</span>
-        ${r.rec ? '<span class="badge rec">↻ mensal</span>' : ''}
-        ${r.desc ? `<span class="desc">${esc(r.desc)}</span>` : ''}
-      </div>
+      <div class="t clamp2">${esc(e.title)}</div>
+      <div class="meta"><span>${e.is_recurring ? recurringMeta(e) : fmtDate(e.date)}</span>${e.is_recurring ? '<span class="badge rec">↻ mensal</span>' : ''}</div>
+      <button class="pay-btn ${p ? 'paid' : ''}" onclick="openPaymentModal('${e.id}')">${label}</button>
     </div>
-    <div class="a money ${r.cls}">${fmt(r.amount)}</div>
-    <button class="more-btn" onclick="${r.onMore}" aria-label="Opções">⋯</button>
+    <div class="a money neg">${fmt(e.amount)}</div>
+    <button class="more-btn" onclick="openBillActions('${e.id}')" aria-label="Opções">⋯</button>
   </div>`;
 }
 
-// ---------- DESPESAS ----------
-function renderCategories(){
+function renderBills(){
+  const bills = categories.flatMap(c => c.expenses);
+  $('b-title').textContent = 'Contas de ' + monthLabel(month).toLowerCase();
+  setMoney('b-plan', sum(bills, b=>b.amount));
+  setMoney('b-paid', sum(bills.filter(b=>b.payment), b=>b.payment.amount));
+  setMoney('b-due', sum(bills.filter(b=>!b.payment), b=>b.amount));
+  setMoney('b-env', summary.envelopes.despesas, true);
   const el = $('categories-list');
   if(!categories.length){ el.innerHTML = '<div class="card"><div class="empty">Sem categorias ainda. Cria a primeira abaixo.</div></div>'; return; }
-  el.innerHTML = categories.map(cat=>{
-    const total = sum(cat.expenses, e=>e.amount);
-    const rows = cat.expenses.map(e => movRow({
-      title: e.title, date: e.date, rec: e.is_recurring, amount: e.amount, cls: 'neg',
-      onMore: `openActions('exp','${e.id}')`, endDate: e.end_date,
-    })).join('');
-    return `<div class="card cat-card">
+  const withBills = categories.filter(c => c.expenses.length);
+  const empty = categories.filter(c => !c.expenses.length);
+  el.innerHTML = withBills.map(cat => `<div class="card cat-card">
       <div class="cat-head">
         <div class="title"><span>${esc(cat.icon)}</span><span class="clamp2">${esc(cat.name)}</span></div>
         <div class="cat-actions">
-          <span class="total money">${fmt(total)}</span>
+          <span class="total money">${fmt(sum(cat.expenses, e=>e.amount))}</span>
           <button onclick="openCategoryModal('${cat.id}')" aria-label="Editar categoria">✎</button>
         </div>
       </div>
-      ${rows || '<div class="empty" style="padding:.625rem">Sem despesas nesta categoria neste mês.</div>'}
-      <button class="add-btn" onclick="openExpenseModal('${cat.id}')">+ despesa</button>
-    </div>`;
-  }).join('');
+      ${cat.expenses.map(billRow).join('')}
+      <button class="add-btn" onclick="openBillModal('${cat.id}')">＋ conta</button>
+    </div>`).join('') +
+    (empty.length ? `<div class="card">
+      <div class="card-title">Sem contas este mês</div>
+      ${empty.map(cat => `<div class="cat-line">
+        <span class="nm">${esc(cat.icon)} ${esc(cat.name)}</span>
+        <button class="btn-soft" onclick="openBillModal('${cat.id}')">＋ conta</button>
+        <button class="more-btn" onclick="openCategoryModal('${cat.id}')" aria-label="Editar categoria">✎</button>
+      </div>`).join('')}
+    </div>` : '');
 }
 
 function findExpense(id){
@@ -979,28 +1105,40 @@ function findExpense(id){
 // ---------- OBJETIVOS ----------
 function bucketProgress(b){
   if(!b.target_amount || b.target_amount<=0) return null;
-  return Math.min(b.current_amount / b.target_amount, 1);
+  return Math.min(Math.max(b.current_amount, 0) / b.target_amount, 1);
 }
 
 function renderBuckets(){
+  setMoney('bk-pg', summary.envelopes.para_gastar, true);
+  setMoney('bk-total', summary.envelopes.objetivos, true);
   const el = $('buckets-list');
   if(!buckets.length){ el.innerHTML = '<div class="card"><div class="empty">Sem objetivos ainda. Cria o primeiro abaixo.</div></div>'; return; }
   el.innerHTML = buckets.map(b=>{
+    const bal = `<b class="money ${b.current_amount < 0 ? 'neg' : ''}" style="${b.current_amount < 0 ? '' : 'color:var(--text)'}">${fmt(b.current_amount)}</b>`;
+    if(b.archived) return `<div class="card bucket-card">
+      <div class="bucket-head"><div class="title"><span>${esc(b.icon)}</span><span class="clamp2">${esc(b.name)}</span></div><span class="badge">apagado</span></div>
+      <div class="bucket-nums"><span>Ficou com saldo: ${bal}</span></div>
+      <div class="bucket-actions">
+        <button onclick="deleteBucket('${b.id}')">Devolver ao Para gastar</button>
+        <button onclick="openBucketHistory('${b.id}')">Histórico</button>
+      </div>
+    </div>`;
     const kindLabel = (KINDS.find(k=>k.k===b.kind)||{}).l || b.kind;
     const pct = bucketProgress(b);
     return `<div class="card bucket-card">
       <div class="bucket-head">
         <div class="title"><span>${esc(b.icon)}</span><span class="clamp2">${esc(b.name)}</span></div>
-        <span class="badge ${b.is_mandatory?'mandatory':''}">${esc(kindLabel)}</span>
+        <span class="badge ${b.kind==='obrigatoria'?'mandatory':''}">${esc(kindLabel)}</span>
       </div>
       ${pct!==null ? `<div class="track"><div class="fill" style="width:${pct*100}%"></div></div>
-      <div class="bucket-nums"><span class="money">${fmt(b.current_amount)} / ${fmt(b.target_amount)}</span><span>${Math.round(pct*100)}%</span></div>` :
-      `<div class="bucket-nums"><span>Guardado: <b class="money" style="color:var(--text)">${fmt(b.current_amount)}</b></span></div>`}
-      <div class="bucket-nums" style="margin-top:.25rem"><span>Contribuição mensal: <span class="money">${fmt(b.monthly_contribution)}</span></span></div>
+      <div class="bucket-nums"><span>${bal} de <span class="money">${fmt(b.target_amount)}</span></span><span>${Math.round(pct*100)}%</span></div>` :
+      `<div class="bucket-nums"><span>Saldo: ${bal}</span></div>`}
+      ${b.monthly_contribution ? `<div class="bucket-nums" style="margin-top:.25rem"><span>Contribuição mensal sugerida: <span class="money">${fmt(b.monthly_contribution)}</span></span></div>` : ''}
       <div class="bucket-actions">
-        <button onclick="quickAddBucket('${b.id}')">+ guardar</button>
-        <button onclick="openBucketModal('${b.id}')">editar</button>
-        <button onclick="deleteBucket('${b.id}')">apagar</button>
+        <button onclick="openMovementModal('${b.id}','deposito')">+ Depositar</button>
+        <button onclick="openMovementModal('${b.id}','levantamento')">− Levantar</button>
+        <button onclick="openBucketHistory('${b.id}')">Histórico</button>
+        <button onclick="openBucketModal('${b.id}')">Editar</button>
       </div>
     </div>`;
   }).join('');
@@ -1017,12 +1155,12 @@ function showModal(inner){
     </div>
   </div>`;
 }
-function amountField(id, value, label='Valor'){
+function amountField(id, value, label='Valor', attrs=''){
   return `<label for="${id}">${label}</label>
-    <input id="${id}" class="amt-input" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" value="${esc(moneyInputValue(value))}">`;
+    <input id="${id}" class="amt-input" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" value="${esc(moneyInputValue(value))}" ${attrs}>`;
 }
-function switchField(id, checked, text){
-  return `<label class="switch-row" for="${id}"><span>${text}</span><input id="${id}" class="switch" type="checkbox" ${checked?'checked':''}></label>`;
+function switchField(id, checked, text, attrs=''){
+  return `<label class="switch-row" for="${id}"><span>${text}</span><input id="${id}" class="switch" type="checkbox" ${checked?'checked':''} ${attrs}></label>`;
 }
 function monthPicker(prefix, key, label){
   const [y, m] = key.split('-').map(Number);
@@ -1039,121 +1177,312 @@ function readMonthPicker(prefix){ return `${$(prefix+'-y').value}-${pad2($(prefi
 async function run(fn){
   try{ await fn(); }catch(e){ if(e.message !== 'unauthorized') toast(e.message || 'Ocorreu um erro.'); }
 }
+function actionSheet(title, sub, buttons){
+  showModal(`
+    <h2>${esc(title)}</h2>
+    <div class="sub">${sub}</div>
+    ${buttons.map(([label, onclick, danger]) => `<button class="sheet-btn ${danger ? 'danger' : ''}" onclick="${onclick}">${label}</button>`).join('')}`);
+}
 
-// receita avulsa ou recorrente (criar/editar)
+// receber dinheiro: valor e repartição (Despesas + objetivos; o resto vai para Para gastar)
+function splitLine(id, label, color, value, bucketId){
+  return `<div class="split-line">
+    <label for="${id}"><span class="dot" style="background:var(${color})"></span><span class="clamp2">${label}</span></label>
+    <input id="${id}" class="split-input" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00"
+      value="${esc(value ? moneyInputValue(value) : '')}" ${bucketId ? `data-bucket="${bucketId}"` : ''} ${value !== undefined ? 'data-manual="1"' : ''}
+      oninput="this.dataset.manual='1'; updateSplitTotals()">
+  </div>`;
+}
 function openIncomeModal(id){
   const e = id ? incomes.find(x=>x.id===id) : null;
+  const active = buckets.filter(b => !b.archived);
+  const archived = e ? e.objetivos.filter(o => o.archived) : [];
+  const allocOf = (bid) => { const o = e && e.objetivos.find(x => x.bucket_id === bid); return o ? o.amount : (e ? 0 : undefined); };
+  window._split = {unpaid: 0, archived: cents(sum(archived, o=>o.amount))};
   showModal(`
-    <h2>${e?'Editar receita':'Nova receita'}</h2>
-    ${amountField('inc-amount', e ? e.amount : '')}
+    <h2>${e ? 'Editar rendimento' : 'Receber dinheiro'}</h2>
+    ${amountField('inc-amount', e ? e.amount : '', 'Valor recebido', 'oninput="applyAutoSplit()"')}
     <label for="inc-source">Origem</label>
-    <input id="inc-source" type="text" list="inc-sources" maxlength="60" placeholder="ex: Salário" value="${esc(e?e.source:'')}">
+    <input id="inc-source" type="text" list="inc-sources" maxlength="60" placeholder="ex: Salário" value="${esc(e ? e.source : 'Salário')}">
     <datalist id="inc-sources">${SOURCES.map(s=>`<option value="${s}">`).join('')}</datalist>
     <label for="inc-desc">Descrição (opcional)</label>
-    <input id="inc-desc" type="text" value="${esc(e&&e.description||'')}">
-    <label for="inc-date">${e&&e.is_recurring?'Data de início':'Data'}</label>
-    <input id="inc-date" type="date" value="${e?e.date:defaultDate()}">
-    ${switchField('inc-rec', e&&e.is_recurring, 'Repetir todos os meses')}
-    ${e&&e.is_recurring?'<p class="hint">Para mudar o valor só a partir de um mês (mantendo o histórico) usa "Alterar valor".</p>':''}
-    <button class="btn-primary" onclick="saveIncome('${id||''}')">Guardar</button>`);
+    <input id="inc-desc" type="text" placeholder="ex: Recibo de outubro" value="${esc(e && e.description || '')}">
+    <label for="inc-date">Data</label>
+    <input id="inc-date" type="date" value="${e ? e.date : defaultDate()}" onchange="fillSplitDefaults()">
+    <div class="split-box">
+      <div class="split-title">Repartição</div>
+      ${splitLine('inc-desp', 'Despesas', '--env-desp', e ? e.despesas : undefined)}
+      <div class="split-hint" id="inc-desp-hint"></div>
+      ${active.map(b => splitLine('inc-b-'+b.id, `${esc(b.icon)}&nbsp;${esc(b.name)}`, '--env-obj', allocOf(b.id), b.id)).join('')}
+      ${archived.map(o => `<div class="split-line ro"><span>${esc(o.icone)} ${esc(o.nome)} (apagado)</span><b class="money">${fmt(o.amount)}</b></div>`).join('')}
+      <div class="split-line total"><span><span class="dot" style="background:var(--env-pg)"></span>Para gastar</span><b class="money" id="inc-pg">0,00 €</b></div>
+      <div class="err hidden" id="inc-err" role="alert"></div>
+    </div>
+    <p class="hint">Despesas: o que fica reservado para as contas do mês. Para gastar: o resto, calculado sozinho.</p>
+    <button class="btn-primary" id="inc-save" onclick="saveIncome('${id||''}')">Guardar</button>`);
+  fillSplitDefaults();
+}
+// por defeito: Despesas = contas por pagar do mês da data; cada objetivo = contribuição mensal (até ao que sobra)
+async function fillSplitDefaults(){
+  const mk = ($('inc-date').value || todayISO()).slice(0, 7);
+  let unpaid = summary.por_pagar;
+  if(mk !== summary.month){
+    try{ unpaid = (await api('/summary?month=' + mk)).por_pagar; }catch(e){ unpaid = 0; }
+  }
+  if(!$('inc-desp')) return;  // modal fechado entretanto
+  window._split.unpaid = cents(unpaid);
+  $('inc-desp-hint').textContent = `Por pagar em ${monthLabel(mk).toLowerCase()}: ${fmt(unpaid)} · já no envelope: ${fmt(summary.envelopes.despesas)}`;
+  applyAutoSplit();
+}
+function applyAutoSplit(){
+  const total = cents(parseMoney($('inc-amount').value)) || 0;
+  let left = total - window._split.archived;
+  const auto = (wanted) => total > 0 ? Math.max(0, Math.min(wanted, left)) : wanted;
+  const desp = $('inc-desp');
+  if(!desp.dataset.manual) desp.value = centsInput(auto(window._split.unpaid));
+  left -= cents(parseMoney(desp.value)) || 0;
+  document.querySelectorAll('.split-input[data-bucket]').forEach(inp => {
+    if(!inp.dataset.manual){
+      const b = buckets.find(x => x.id === inp.dataset.bucket);
+      inp.value = centsInput(auto(cents(b ? b.monthly_contribution : 0)));
+    }
+    left -= cents(parseMoney(inp.value)) || 0;
+  });
+  updateSplitTotals();
+}
+function updateSplitTotals(){
+  const total = cents(parseMoney($('inc-amount').value));
+  const parts = [...document.querySelectorAll('.split-input')].map(i => i.value.trim() === '' ? 0 : cents(parseMoney(i.value)));
+  let msg = '';
+  if(parts.some(p => !Number.isFinite(p) || p < 0)) msg = 'Há um valor inválido na repartição.';
+  const free = (Number.isFinite(total) ? total : 0) - sum(parts) - window._split.archived;
+  if(!msg && total > 0 && free < 0) msg = `A repartição ultrapassa o valor recebido em ${fmt(-free/100)}.`;
+  $('inc-pg').textContent = fmt(Math.max(0, free) / 100);
+  $('inc-err').textContent = msg;
+  $('inc-err').classList.toggle('hidden', !msg);
+  $('inc-save').disabled = !!msg || !(total > 0);
 }
 function saveIncome(id){
   return run(async ()=>{
-    const amount = parseMoney($('inc-amount').value);
+    updateSplitTotals();
+    if($('inc-save').disabled){ toast('Indica o valor recebido e uma repartição válida.'); return; }
     const source = $('inc-source').value.trim();
-    const description = $('inc-desc').value.trim() || null;
-    const date = $('inc-date').value || defaultDate();
-    const is_recurring = $('inc-rec').checked;
-    if(!source || !(amount > 0)){ toast('Indica a origem e um valor maior que zero.'); return; }
-    const body = JSON.stringify({amount, source, description, date, is_recurring});
+    if(!source){ toast('Indica a origem.'); return; }
+    const objetivos = [...document.querySelectorAll('.split-input[data-bucket]')]
+      .map(i => ({bucket_id: i.dataset.bucket, amount: parseMoney(i.value) || 0}))
+      .filter(o => o.amount > 0);
+    const body = JSON.stringify({
+      amount: parseMoney($('inc-amount').value), source, description: $('inc-desc').value.trim() || null,
+      date: $('inc-date').value || defaultDate(), despesas: parseMoney($('inc-desp').value) || 0, objetivos,
+    });
     if(id) await api('/income-entries/'+id, {method:'PUT', body});
     else await api('/income-entries', {method:'POST', body});
     closeModal();
     await loadAll();
   });
 }
-
-function openRecurringIncomeModal(){
-  showModal(`
-    <h2>Rendimento mensal</h2>
-    ${amountField('ri-amount', '')}
-    <label for="ri-source">Origem</label>
-    <input id="ri-source" type="text" list="ri-sources" maxlength="60" value="Salário">
-    <datalist id="ri-sources">${SOURCES.map(s=>`<option value="${s}">`).join('')}</datalist>
-    ${monthPicker('ri-start', month, 'A partir de')}
-    <p class="hint">Entra automaticamente no saldo todos os meses a partir do mês escolhido.</p>
-    <button class="btn-primary" onclick="saveRecurringIncome()">Guardar</button>`);
+function openIncomeActions(id){
+  const e = incomes.find(x=>x.id===id); if(!e) return;
+  actionSheet(e.source, `${fmt(e.amount)} · ${fmtDate(e.date)}`, [
+    ['✎ Editar valor ou repartição', `openIncomeModal('${id}')`],
+    ['🗑 Apagar', `deleteIncome('${id}')`, true],
+  ]);
 }
-function saveRecurringIncome(){
+function deleteIncome(id){
+  const e = incomes.find(x=>x.id===id); if(!e) return;
+  if(!confirm(`Apagar este rendimento? A repartição é revertida: saem ${fmt(e.despesas)} de Despesas, ${fmt(sum(e.objetivos, o=>o.amount))} dos objetivos e ${fmt(e.para_gastar)} do Para gastar.`)) return;
   return run(async ()=>{
-    const amount = parseMoney($('ri-amount').value);
-    const source = $('ri-source').value.trim() || 'Salário';
+    await api('/income-entries/'+id, {method:'DELETE'});
+    closeModal();
+    await loadAll();
+  });
+}
+
+// gasto do dia a dia: sai do Para gastar
+function openSpendingModal(id){
+  const sp = id ? spendings.find(x=>x.id===id) : null;
+  let last = null;
+  try{ last = localStorage.getItem(LAST_CAT_KEY); }catch(e){}
+  const selected = sp ? (sp.category_id || '') : (categories.some(c => c.id === last) ? last : (categories[0] || {}).id || '__nova');
+  window._newCatIcon = '🍔';
+  showModal(`
+    <h2>${sp ? 'Editar gasto' : 'Novo gasto'}</h2>
+    ${amountField('sp-amount', sp ? sp.amount : '')}
+    <label for="sp-cat">Categoria</label>
+    <select id="sp-cat" onchange="$('sp-new').classList.toggle('hidden', this.value !== '__nova')">
+      ${sp && !sp.category_id ? '<option value="" selected>🏷️ Sem categoria</option>' : ''}
+      ${categories.map(c => `<option value="${c.id}" ${c.id===selected?'selected':''}>${esc(c.icon)} ${esc(c.name)}</option>`).join('')}
+      <option value="__nova" ${selected==='__nova'?'selected':''}>＋ Nova categoria…</option>
+    </select>
+    <div id="sp-new" class="${selected==='__nova' ? '' : 'hidden'}">
+      <label for="sp-new-name">Nome da nova categoria</label>
+      <input id="sp-new-name" type="text" placeholder="ex: Alimentação">
+      <label>Ícone</label>
+      <div class="icon-picker" id="sp-new-icons"></div>
+    </div>
+    <label for="sp-desc">Descrição (opcional)</label>
+    <input id="sp-desc" type="text" placeholder="ex: Monster" value="${esc(sp && sp.description || '')}">
+    <label for="sp-date">Data</label>
+    <input id="sp-date" type="date" value="${sp ? sp.date : defaultDate()}">
+    <p class="hint">Sai do Para gastar (agora ${fmt(summary.envelopes.para_gastar)}).</p>
+    <button class="btn-primary" onclick="saveSpending('${id||''}')">Guardar</button>`);
+  renderIconPicker('sp-new-icons', ICONS_CAT, window._newCatIcon, (ic)=>{ window._newCatIcon = ic; });
+}
+function saveSpending(id){
+  return run(async ()=>{
+    const sp = id ? spendings.find(x=>x.id===id) : null;
+    const amount = parseMoney($('sp-amount').value);
     if(!(amount > 0)){ toast('Indica um valor maior que zero.'); return; }
-    await api('/income-entries', {method:'POST', body: JSON.stringify({amount, source, date: readMonthPicker('ri-start')+'-01', is_recurring:true})});
+    const date = $('sp-date').value || defaultDate();
+    let category_id = $('sp-cat').value;
+    const newName = $('sp-new-name').value.trim();
+    if(category_id === '__nova' && !newName){ toast('Indica o nome da nova categoria.'); return; }
+    const avail = cents(summary.envelopes.para_gastar) + (sp && countsNow(sp.date) ? cents(sp.amount) : 0);
+    if(countsNow(date) && cents(amount) > avail &&
+       !confirm(`Isto deixa o Para gastar negativo (${fmt((avail - cents(amount)) / 100)}). Registar mesmo assim?`)) return;
+    if(category_id === '__nova'){
+      category_id = (await api('/categories', {method:'POST', body: JSON.stringify({name: newName, icon: window._newCatIcon})})).id;
+    }
+    const body = {amount, description: $('sp-desc').value.trim() || null, date};
+    if(category_id) body.category_id = category_id;
+    if(id) await api('/spendings/'+id, {method:'PUT', body: JSON.stringify(body)});
+    else await api('/spendings', {method:'POST', body: JSON.stringify(body)});
+    try{ if(category_id) localStorage.setItem(LAST_CAT_KEY, category_id); }catch(e){}
     closeModal();
     await loadAll();
   });
 }
-
-// menu de opções de um movimento (receita ou despesa)
-function openActions(kind, id){
-  const e = kind==='inc' ? incomes.find(x=>x.id===id) : findExpense(id);
-  if(!e) return;
-  const title = kind==='inc' ? e.source : e.title;
-  showModal(`
-    <h2>${esc(title)}</h2>
-    <div class="sub">${fmt(e.amount)} · ${e.is_recurring ? recurringMeta(e) : fmtDate(e.date)}</div>
-    <button class="sheet-btn" onclick="${kind==='inc' ? `openIncomeModal('${id}')` : `openExpenseModal('${e.category_id}','${id}')`}">✎ Editar</button>
-    ${e.is_recurring ? `
-      <button class="sheet-btn" onclick="openChangeModal('${kind}','${id}')">↻ Alterar valor a partir de um mês</button>
-      <button class="sheet-btn" onclick="openEndModal('${kind}','${id}')">⏹ Terminar</button>` : ''}
-    <button class="sheet-btn danger" onclick="deleteMovement('${kind}','${id}')">🗑 Apagar</button>`);
+function openSpendingActions(id){
+  const sp = spendings.find(x=>x.id===id); if(!sp) return;
+  actionSheet(sp.description || sp.categoria || 'Gasto', `${fmt(sp.amount)} · ${fmtDate(sp.date)}`, [
+    ['✎ Editar', `openSpendingModal('${id}')`],
+    ['🗑 Apagar', `deleteSpending('${id}')`, true],
+  ]);
 }
-function deleteMovement(kind, id){
-  const e = kind==='inc' ? incomes.find(x=>x.id===id) : findExpense(id);
-  const what = kind==='inc' ? 'esta receita' : 'esta despesa';
-  const extra = e && e.is_recurring ? '\n\nÉ recorrente: desaparece de todos os meses. Para deixar de contar só a partir de um mês, usa "Terminar".' : '';
-  if(!confirm(`Apagar ${what}?${extra}`)) return;
+function deleteSpending(id){
+  const sp = spendings.find(x=>x.id===id); if(!sp) return;
+  if(!confirm(`Apagar este gasto? ${fmt(sp.amount)} voltam ao Para gastar.`)) return;
   return run(async ()=>{
-    await api((kind==='inc' ? '/income-entries/' : '/expenses/') + id, {method:'DELETE'});
+    await api('/spendings/'+id, {method:'DELETE'});
     closeModal();
     await loadAll();
   });
 }
 
-function openChangeModal(kind, id){
-  const e = kind==='inc' ? incomes.find(x=>x.id===id) : findExpense(id);
-  if(!e) return;
+// contas (despesas planeadas) e pagamentos
+function openBillModal(categoryId, id){
+  const e = id ? findExpense(id) : null;
+  showModal(`
+    <h2>${e?'Editar conta':'Nova conta'}</h2>
+    <label for="exp-title">Título</label>
+    <input id="exp-title" type="text" placeholder="ex: Renda" value="${esc(e?e.title:'')}">
+    ${amountField('exp-amount', e ? e.amount : '')}
+    <label for="exp-date">${e&&e.is_recurring?'Data de início':'Data'}</label>
+    <input id="exp-date" type="date" value="${e?e.date:defaultDate()}">
+    ${switchField('exp-rec', e&&e.is_recurring, 'Repetir todos os meses')}
+    ${e ? (e.is_recurring ? '<p class="hint">Para mudar o valor só a partir de um mês (mantendo o histórico) usa "Alterar valor".</p>' : '') : `
+      ${switchField('exp-paid', false, 'Já paga', `onchange="$('exp-paid-box').classList.toggle('hidden', !this.checked)"`)}
+      <div id="exp-paid-box" class="hidden">
+        <label for="exp-paid-date">Data de pagamento</label>
+        <input id="exp-paid-date" type="date" value="${todayISO()}">
+      </div>`}
+    <button class="btn-primary" onclick="saveBill('${categoryId}','${id||''}')">Guardar</button>`);
+}
+function saveBill(categoryId, id){
+  return run(async ()=>{
+    const title = $('exp-title').value.trim();
+    const amount = parseMoney($('exp-amount').value);
+    if(!title || !(amount > 0)){ toast('Preenche o título e um valor maior que zero.'); return; }
+    const body = {title, amount, date: $('exp-date').value || defaultDate(), is_recurring: $('exp-rec').checked};
+    if(!id && $('exp-paid').checked) body.paid_date = $('exp-paid-date').value || todayISO();
+    if(id) await api('/expenses/'+id, {method:'PUT', body: JSON.stringify(body)});
+    else await api('/categories/'+categoryId+'/expenses', {method:'POST', body: JSON.stringify(body)});
+    closeModal();
+    await loadAll();
+  });
+}
+function openPaymentModal(id){
+  const e = findExpense(id); if(!e) return;
+  const p = e.payment;
+  showModal(`
+    <h2>${p ? 'Pagamento' : 'Marcar como paga'}</h2>
+    <div class="sub">${esc(e.title)} · ${esc(monthLabel(month))}</div>
+    ${amountField('pay-amount', p ? p.amount : e.amount, 'Valor pago')}
+    <label for="pay-date">Data de pagamento</label>
+    <input id="pay-date" type="date" value="${p ? p.paid_date : todayISO()}">
+    <p class="hint">Sai do envelope Despesas (agora ${fmt(summary.envelopes.despesas)}).</p>
+    <button class="btn-primary" onclick="savePayment('${id}')">${p ? 'Guardar' : 'Marcar como paga'}</button>
+    ${p ? `<button class="btn-danger" onclick="unpay('${id}')">Desmarcar (volta a por pagar)</button>` : ''}`);
+}
+function savePayment(id){
+  return run(async ()=>{
+    const amount = parseMoney($('pay-amount').value);
+    if(!(amount > 0)){ toast('Indica um valor maior que zero.'); return; }
+    await api(`/expenses/${id}/payments/${month}`, {method:'PUT', body: JSON.stringify({amount, paid_date: $('pay-date').value || todayISO()})});
+    closeModal();
+    await loadAll();
+  });
+}
+function unpay(id){
+  if(!confirm('Desmarcar o pagamento? O valor volta ao envelope Despesas.')) return;
+  return run(async ()=>{
+    await api(`/expenses/${id}/payments/${month}`, {method:'DELETE'});
+    closeModal();
+    await loadAll();
+  });
+}
+function openBillActions(id){
+  const e = findExpense(id); if(!e) return;
+  actionSheet(e.title, `${fmt(e.amount)} · ${e.is_recurring ? recurringMeta(e) : fmtDate(e.date)}`, [
+    [e.payment ? '✓ Pagamento deste mês' : '✓ Marcar como paga', `openPaymentModal('${id}')`],
+    ['✎ Editar', `openBillModal('${e.category_id}','${id}')`],
+    ...(e.is_recurring ? [
+      ['↻ Alterar valor a partir de um mês', `openChangeModal('${id}')`],
+      ['⏹ Terminar', `openEndModal('${id}')`],
+    ] : []),
+    ['🗑 Apagar', `deleteBill('${id}')`, true],
+  ]);
+}
+function deleteBill(id){
+  const e = findExpense(id);
+  const extra = e && e.is_recurring ? ' É recorrente: desaparece de todos os meses (para deixar de contar a partir de um mês usa "Terminar").' : '';
+  if(!confirm(`Apagar esta conta?${extra} Os pagamentos registados também são apagados e o valor volta ao envelope Despesas.`)) return;
+  return run(async ()=>{
+    await api('/expenses/' + id, {method:'DELETE'});
+    closeModal();
+    await loadAll();
+  });
+}
+function openChangeModal(id){
+  const e = findExpense(id); if(!e) return;
   showModal(`
     <h2>Alterar valor</h2>
-    <div class="sub">${esc(kind==='inc'?e.source:e.title)} · atual ${fmt(e.amount)}</div>
+    <div class="sub">${esc(e.title)} · atual ${fmt(e.amount)}</div>
     ${amountField('ch-amount', '', 'Novo valor')}
     ${monthPicker('ch-start', month, 'A partir de')}
     <p class="hint">Os meses anteriores mantêm o valor antigo.</p>
-    <button class="btn-primary" onclick="saveChange('${kind}','${id}')">Guardar</button>`);
+    <button class="btn-primary" onclick="saveChange('${id}')">Guardar</button>`);
 }
-function saveChange(kind, id){
+function saveChange(id){
   return run(async ()=>{
     const amount = parseMoney($('ch-amount').value);
     if(!(amount > 0)){ toast('Indica um valor maior que zero.'); return; }
-    await api((kind==='inc' ? '/income-entries/' : '/expenses/') + id + '/change', {method:'POST', body: JSON.stringify({amount, start_month: readMonthPicker('ch-start')})});
+    await api('/expenses/' + id + '/change', {method:'POST', body: JSON.stringify({amount, start_month: readMonthPicker('ch-start')})});
     closeModal();
     await loadAll();
   });
 }
-
-function openEndModal(kind, id){
-  const e = kind==='inc' ? incomes.find(x=>x.id===id) : findExpense(id);
-  if(!e) return;
+function openEndModal(id){
+  const e = findExpense(id); if(!e) return;
   showModal(`
     <h2>Terminar</h2>
-    <div class="sub">${esc(kind==='inc'?e.source:e.title)} · ${fmt(e.amount)} por mês</div>
+    <div class="sub">${esc(e.title)} · ${fmt(e.amount)} por mês</div>
     ${monthPicker('end', month, 'Último mês em que conta')}
-    <button class="btn-primary" onclick="saveEnd('${kind}','${id}')">Terminar</button>`);
+    <button class="btn-primary" onclick="saveEnd('${id}')">Terminar</button>`);
 }
-function saveEnd(kind, id){
+function saveEnd(id){
   return run(async ()=>{
-    await api((kind==='inc' ? '/income-entries/' : '/expenses/') + id + '/end', {method:'POST', body: JSON.stringify({end_month: readMonthPicker('end')})});
+    await api('/expenses/' + id + '/end', {method:'POST', body: JSON.stringify({end_month: readMonthPicker('end')})});
     closeModal();
     await loadAll();
   });
@@ -1165,7 +1494,7 @@ function openCategoryModal(id){
   showModal(`
     <h2>${cat?'Editar categoria':'Nova categoria'}</h2>
     <label for="cat-name">Nome</label>
-    <input id="cat-name" type="text" placeholder="ex: Veículos" value="${esc(cat?cat.name:'')}">
+    <input id="cat-name" type="text" placeholder="ex: Casa" value="${esc(cat?cat.name:'')}">
     <label>Ícone</label>
     <div class="icon-picker" id="cat-icons"></div>
     <button class="btn-primary" onclick="saveCategory('${id||''}')">Guardar</button>
@@ -1193,7 +1522,7 @@ function saveCategory(id){
   });
 }
 function deleteCategory(id){
-  if(!confirm('Apagar esta categoria e todas as suas despesas (de todos os meses)?')) return;
+  if(!confirm('Apagar a categoria, as suas contas (de todos os meses) e os pagamentos dessas contas? O valor pago volta ao envelope Despesas. Os gastos do dia a dia desta categoria ficam "Sem categoria".')) return;
   return run(async ()=>{
     await api('/categories/'+id, {method:'DELETE'});
     closeModal();
@@ -1201,31 +1530,73 @@ function deleteCategory(id){
   });
 }
 
-function openExpenseModal(categoryId, id){
-  const e = id ? findExpense(id) : null;
+// objetivos: depositar (sai do Para gastar), levantar (volta ao Para gastar), histórico
+function openMovementModal(bucketId, kind, movementId){
+  const b = buckets.find(x=>x.id===bucketId); if(!b) return;
+  const mv = movementId ? (window._history || []).find(m => m.id === movementId) : null;
+  const dep = kind === 'deposito';
   showModal(`
-    <h2>${e?'Editar despesa':'Nova despesa'}</h2>
-    <label for="exp-title">Título</label>
-    <input id="exp-title" type="text" placeholder="ex: Crédito do carro" value="${esc(e?e.title:'')}">
-    ${amountField('exp-amount', e ? e.amount : '')}
-    <label for="exp-date">${e&&e.is_recurring?'Data de início':'Data'}</label>
-    <input id="exp-date" type="date" value="${e?e.date:defaultDate()}">
-    ${switchField('exp-rec', e&&e.is_recurring, 'Repetir todos os meses')}
-    ${e&&e.is_recurring?'<p class="hint">Para mudar o valor só a partir de um mês (mantendo o histórico) usa "Alterar valor".</p>':''}
-    <button class="btn-primary" onclick="saveExpense('${categoryId}','${id||''}')">Guardar</button>`);
+    <h2>${mv ? (dep ? 'Editar depósito' : 'Editar levantamento') : (dep ? 'Depositar' : 'Levantar')}</h2>
+    <div class="sub">${esc(b.icon)} ${esc(b.name)} · saldo ${fmt(b.current_amount)}</div>
+    ${amountField('mv-amount', mv ? mv.amount : '')}
+    <label for="mv-date">Data</label>
+    <input id="mv-date" type="date" value="${mv ? mv.date : todayISO()}">
+    <label for="mv-note">Nota (opcional)</label>
+    <input id="mv-note" type="text" value="${esc(mv && mv.note || '')}">
+    <p class="hint">${dep ? `Sai do Para gastar (agora ${fmt(summary.envelopes.para_gastar)}).` : 'Volta ao Para gastar.'}</p>
+    <button class="btn-primary" onclick="saveMovement('${bucketId}','${kind}','${movementId||''}')">${mv ? 'Guardar' : (dep ? 'Depositar' : 'Levantar')}</button>
+    ${mv ? `<button class="btn-danger" onclick="deleteMovement('${movementId}')">${dep ? 'Apagar depósito' : 'Apagar levantamento'}</button>` : ''}`);
 }
-function saveExpense(categoryId, id){
+function saveMovement(bucketId, kind, movementId){
   return run(async ()=>{
-    const title = $('exp-title').value.trim();
-    const amount = parseMoney($('exp-amount').value);
-    const date = $('exp-date').value || defaultDate();
-    const is_recurring = $('exp-rec').checked;
-    if(!title || !(amount > 0)){ toast('Preenche o título e um valor maior que zero.'); return; }
-    const body = JSON.stringify({title, amount, date, is_recurring});
-    if(id) await api('/expenses/'+id, {method:'PUT', body});
-    else await api('/categories/'+categoryId+'/expenses', {method:'POST', body});
+    const b = buckets.find(x=>x.id===bucketId);
+    const mv = movementId ? (window._history || []).find(m => m.id === movementId) : null;
+    const amount = parseMoney($('mv-amount').value);
+    if(!(amount > 0)){ toast('Indica um valor maior que zero.'); return; }
+    const date = $('mv-date').value || todayISO();
+    const old = mv && countsNow(mv.date) ? cents(mv.amount) : 0;
+    if(kind === 'deposito'){
+      const avail = cents(summary.envelopes.para_gastar) + old;
+      if(countsNow(date) && cents(amount) > avail &&
+         !confirm(`Isto deixa o Para gastar negativo (${fmt((avail - cents(amount)) / 100)}). Depositar mesmo assim?`)) return;
+    } else {
+      const avail = cents(b.current_amount) + old;
+      if(countsNow(date) && cents(amount) > avail &&
+         !confirm(`Isto deixa o objetivo negativo (${fmt((avail - cents(amount)) / 100)}). Levantar mesmo assim?`)) return;
+    }
+    const body = JSON.stringify({kind, amount, date, note: $('mv-note').value.trim() || null});
+    if(movementId) await api('/bucket-movements/' + movementId, {method:'PUT', body});
+    else await api('/buckets/' + bucketId + '/movements', {method:'POST', body});
     closeModal();
     await loadAll();
+  });
+}
+function deleteMovement(movementId){
+  if(!confirm('Apagar este movimento? Os saldos voltam ao que eram.')) return;
+  return run(async ()=>{
+    await api('/bucket-movements/' + movementId, {method:'DELETE'});
+    closeModal();
+    await loadAll();
+  });
+}
+function openBucketHistory(id){
+  const b = buckets.find(x=>x.id===id); if(!b) return;
+  return run(async ()=>{
+    const items = await api('/buckets/' + id + '/movements');
+    window._history = items;
+    const row = (m) => {
+      const label = m.kind === 'rendimento' ? `Do rendimento «${esc(m.note || '')}»`
+        : (m.kind === 'deposito' ? 'Depósito' : 'Levantamento') + (m.note ? ` · ${esc(m.note)}` : '');
+      return `<div class="mov-row">
+        <div class="main"><div class="t clamp2">${label}</div><div class="meta"><span>${fmtDate(m.date)}</span></div></div>
+        <div class="a money ${m.kind === 'levantamento' ? 'neg' : 'pos'}">${m.kind === 'levantamento' ? '−' : '+'}${fmt(m.amount)}</div>
+        ${m.id && !b.archived ? `<button class="more-btn" onclick="openMovementModal('${b.id}','${m.kind}','${m.id}')" aria-label="Editar movimento">✎</button>` : '<span></span>'}
+      </div>`;
+    };
+    showModal(`
+      <h2>${esc(b.icon)} ${esc(b.name)}</h2>
+      <div class="sub">Saldo ${fmt(b.current_amount)}${b.opening_amount ? ` · inclui ${fmt(b.opening_amount)} já guardados no saldo inicial` : ''}</div>
+      <div class="hist-list">${items.length ? items.map(row).join('') : '<div class="empty">Sem movimentos ainda.</div>'}</div>`);
   });
 }
 
@@ -1241,16 +1612,14 @@ function openBucketModal(id){
     <div class="icon-picker" id="bk-icons"></div>
     <label>Tipo</label>
     <div class="kind-row" id="bk-kinds"></div>
-    <label for="bk-current">Já guardado</label>
-    <input id="bk-current" type="text" inputmode="decimal" autocomplete="off" value="${esc(moneyInputValue(b?b.current_amount:0))}">
+    <label for="bk-opening">Já guardado no saldo inicial</label>
+    <input id="bk-opening" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" value="${esc(b && b.opening_amount ? moneyInputValue(b.opening_amount) : '')}">
+    <p class="hint">Dinheiro que este objetivo já tinha no dia do saldo inicial. Para juntar dinheiro novo usa «Depositar».</p>
     <label for="bk-target">Meta (opcional)</label>
-    <input id="bk-target" type="text" inputmode="decimal" autocomplete="off" value="${esc(b&&b.target_amount!=null?moneyInputValue(b.target_amount):'')}">
-    <label for="bk-contrib">Contribuição mensal planeada</label>
-    <input id="bk-contrib" type="text" inputmode="decimal" autocomplete="off" value="${esc(moneyInputValue(b?b.monthly_contribution:0))}">
-    <div class="checkbox-row">
-      <input id="bk-mandatory" type="checkbox" ${b&&b.is_mandatory?'checked':''}>
-      <label for="bk-mandatory">Contribuição obrigatória (conta sempre para "pronto a gastar")</label>
-    </div>
+    <input id="bk-target" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" value="${esc(b&&b.target_amount!=null?moneyInputValue(b.target_amount):'')}">
+    <label for="bk-contrib">Contribuição mensal sugerida</label>
+    <input id="bk-contrib" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" value="${esc(b && b.monthly_contribution ? moneyInputValue(b.monthly_contribution) : '')}">
+    <p class="hint">Valor proposto para este objetivo quando recebes dinheiro.</p>
     <button class="btn-primary" onclick="saveBucket('${id||''}')">Guardar</button>
     ${b?`<button class="btn-danger" onclick="deleteBucket('${id}')">Apagar objetivo</button>`:''}`);
   renderIconPicker('bk-icons', ICONS_BUCKET, window._bucketIcon, (ic)=>{ window._bucketIcon = ic; });
@@ -1265,14 +1634,14 @@ function saveBucket(id){
   return run(async ()=>{
     const name = $('bk-name').value.trim();
     if(!name){ toast('Indica um nome.'); return; }
-    const icon = window._bucketIcon;
-    const kind = window._bucketKind;
-    const current_amount = parseMoney($('bk-current').value)||0;
-    const targetRaw = $('bk-target').value.trim();
-    const target_amount = targetRaw==='' ? null : parseMoney(targetRaw);
-    const monthly_contribution = parseMoney($('bk-contrib').value)||0;
-    const is_mandatory = $('bk-mandatory').checked;
-    const payload = {name, icon, kind, current_amount, target_amount, monthly_contribution, is_mandatory};
+    const money = (elId) => { const raw = $(elId).value.trim(); return raw === '' ? null : parseMoney(raw); };
+    const opening_amount = money('bk-opening') ?? 0;
+    const target_amount = money('bk-target');
+    const monthly_contribution = money('bk-contrib') ?? 0;
+    if([opening_amount, monthly_contribution, target_amount ?? 0].some(v => !Number.isFinite(v) || v < 0)){
+      toast('Os valores têm de ser números positivos.'); return;
+    }
+    const payload = {name, icon: window._bucketIcon, kind: window._bucketKind, opening_amount, target_amount, monthly_contribution};
     if(id) await api('/buckets/'+id, {method:'PUT', body: JSON.stringify(payload)});
     else await api('/buckets', {method:'POST', body: JSON.stringify(payload)});
     closeModal();
@@ -1280,19 +1649,15 @@ function saveBucket(id){
   });
 }
 function deleteBucket(id){
-  if(!confirm('Apagar este objetivo?')) return;
+  const b = buckets.find(x=>x.id===id); if(!b) return;
+  const bal = cents(b.current_amount);
+  const msg = b.archived ? `Devolver ${fmt(b.current_amount)} ao Para gastar?`
+    : bal ? `Apagar o objetivo? O saldo de ${fmt(b.current_amount)} volta ao Para gastar (o histórico fica guardado).`
+    : 'Apagar este objetivo?';
+  if(!confirm(msg)) return;
   return run(async ()=>{
     await api('/buckets/'+id, {method:'DELETE'});
     closeModal();
-    await loadAll();
-  });
-}
-function quickAddBucket(id){
-  const b = buckets.find(x=>x.id===id); if(!b) return;
-  const amt = parseMoney(prompt('Quanto queres adicionar a "'+b.name+'"? (€)','10'));
-  if(!amt) return;
-  return run(async ()=>{
-    await api('/buckets/'+id, {method:'PUT', body: JSON.stringify({current_amount: Number(b.current_amount||0) + amt})});
     await loadAll();
   });
 }
