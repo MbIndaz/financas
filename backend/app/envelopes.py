@@ -14,7 +14,7 @@ Só contam movimentos com data entre opening_date e hoje; os anteriores são his
     Objetivo    = já guardado no saldo inicial + partes de rendimentos + depósitos − levantamentos
 """
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 from typing import Optional
 
@@ -101,3 +101,44 @@ def compute(db: Session, user_id: str, today: Optional[date] = None) -> Envelope
         opening_balance=settings.opening_balance if settings else None,
         opening_date=start,
     )
+
+
+def para_gastar_by_day(db: Session, user_id: str, first: date, last: date) -> list:
+    """Para gastar no fim de cada dia de first a last: [(dia, saldo)], com saldo None antes do saldo inicial.
+
+    Cada valor é igual a compute(today=dia).para_gastar: parte do saldo no fim da véspera do
+    primeiro dia e soma, dia a dia, os mesmos movimentos com a mesma fórmula.
+    """
+    settings = db.query(models.AccountSettings).filter(models.AccountSettings.user_id == user_id).first()
+    start = settings.opening_date if settings else None
+    days = [first + timedelta(days=i) for i in range((last - first).days + 1)]
+    begin = max(first, start) if start else first
+    if begin > last:
+        return [(d, None) for d in days]
+
+    Inc, Alloc = models.IncomeEntry, models.IncomeAllocation
+    Bucket, Mov = models.SavingsBucket, models.BucketMovement
+    Spend = models.Spending
+    window = lambda col: and_(col >= begin, col <= last)
+    delta: dict = {}
+    for day, total in [
+        *db.query(Inc.date, func.sum(Inc.amount - Inc.alloc_despesas).label("delta"))
+            .filter(Inc.user_id == user_id, window(Inc.date)).group_by(Inc.date),
+        *db.query(Inc.date, -func.sum(Alloc.amount).label("delta")).join(Inc, Inc.id == Alloc.income_entry_id)
+            .filter(Inc.user_id == user_id, window(Inc.date)).group_by(Inc.date),
+        *db.query(Spend.date, -func.sum(Spend.amount).label("delta"))
+            .filter(Spend.user_id == user_id, window(Spend.date)).group_by(Spend.date),
+        *db.query(Mov.date, -func.sum(Mov.amount).label("delta")).join(Bucket, Bucket.id == Mov.bucket_id)
+            .filter(Bucket.user_id == user_id, window(Mov.date)).group_by(Mov.date),
+    ]:
+        delta[day] = delta.get(day, ZERO) + total
+
+    balance = compute(db, user_id, begin - timedelta(days=1)).para_gastar
+    out = []
+    for d in days:
+        if d < begin:
+            out.append((d, None))
+            continue
+        balance += delta.get(d, ZERO)
+        out.append((d, balance))
+    return out

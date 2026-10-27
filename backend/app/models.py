@@ -165,7 +165,8 @@ class Spending(Base):
     user_id = Column(UUID(as_uuid=False), ForeignKey("users.id"), nullable=False, index=True)
     category_id = Column(UUID(as_uuid=False), ForeignKey("expense_categories.id", ondelete="SET NULL"), nullable=True, index=True)
     amount = Column(Numeric(12, 2), nullable=False)
-    description = Column(String, nullable=True)
+    description = Column(String, nullable=True)  # o quê: "Monster"
+    place = Column(String, nullable=True)  # onde: "Pingo Doce" (até 60 caracteres)
     date = Column(Date, nullable=False, default=date.today)
     created_at = Column(DateTime, default=datetime.utcnow)
 

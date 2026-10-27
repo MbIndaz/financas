@@ -2,13 +2,18 @@ from datetime import date as Date, datetime
 from decimal import Decimal
 from typing import Annotated, Literal, Optional, List
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from pydantic import BaseModel, BeforeValidator, ConfigDict, EmailStr, Field, field_validator
 
 # os campos chamam-se "date", por isso o tipo usa o alias Date para não ser sombreado
 # Dinheiro à entrada: Decimal com 2 casas e no máximo 10 dígitos inteiros (Numeric(12, 2)); à saída: float.
 Money = Annotated[Decimal, Field(gt=0, max_digits=12, decimal_places=2)]
 MoneyOrZero = Annotated[Decimal, Field(ge=0, max_digits=12, decimal_places=2)]
 SignedMoney = Annotated[Decimal, Field(max_digits=12, decimal_places=2)]
+# texto curto opcional: espaços à volta removidos e vazio passa a None
+Place = Annotated[
+    Optional[Annotated[str, Field(max_length=60)]],
+    BeforeValidator(lambda v: (v.strip() or None) if isinstance(v, str) else v),
+]
 
 
 # ---------- Auth ----------
@@ -109,7 +114,8 @@ class IncomeEntryOut(BaseModel):
 class SpendingIn(BaseModel):
     amount: Money
     category_id: str
-    description: Optional[str] = None
+    description: Optional[str] = None  # o quê: "Monster"
+    place: Place = None  # onde: "Pingo Doce"
     date: Optional[Date] = None  # por defeito hoje
 
 
@@ -117,6 +123,7 @@ class SpendingUpdate(BaseModel):
     amount: Optional[Money] = None
     category_id: Optional[str] = None
     description: Optional[str] = None
+    place: Place = None
     date: Optional[Date] = None
 
 
@@ -127,6 +134,7 @@ class SpendingOut(BaseModel):
     categoria: Optional[str] = None
     icone: Optional[str] = None
     description: Optional[str] = None
+    place: Optional[str] = None
     date: Date
 
 
@@ -281,6 +289,18 @@ class MonthHistory(BaseModel):
     saidas: float  # contas pagas + gastos do dia a dia
 
 
+class DayBalance(BaseModel):
+    dia: Date
+    saldo: Optional[float] = None  # None: dia anterior ao saldo inicial
+
+
+class PlaceTotal(BaseModel):
+    nome: str
+    total: float
+    por_categoria: bool = False  # gastos sem local, agrupados pela categoria
+    icone: Optional[str] = None
+
+
 class SummaryOut(BaseModel):
     month: str  # "AAAA-MM"
     # estatísticas do mês (incluem movimentos anteriores ao saldo inicial)
@@ -297,3 +317,34 @@ class SummaryOut(BaseModel):
     opening_balance: Optional[float] = None
     opening_date: Optional[Date] = None
     opening_defined: bool
+    # Para gastar no fim de cada dia do mês (até hoje) e onde se gastou mais no mês
+    evolucao_para_gastar: List[DayBalance]
+    top_locais: List[PlaceTotal]
+
+
+# ---------- Histórico unificado ----------
+HistoryType = Literal["tudo", "despesas", "objetivos", "gastos", "receitas"]
+
+
+class HistoryItem(BaseModel):
+    tipo: Literal["despesas", "objetivos", "gastos", "receitas"]
+    subtipo: Literal["pagamento", "deposito", "levantamento", "reparticao", "gasto", "rendimento"]
+    id: Optional[str] = None  # do registo de origem (pagamento, movimento, gasto, rendimento)
+    descricao: str
+    local: Optional[str] = None
+    categoria: Optional[str] = None
+    icone: Optional[str] = None
+    date: Date
+    amount: float  # com sinal, do ponto de vista do envelope afetado: + entra, − sai
+    envelope: str  # envelope afetado, ex.: "Para gastar", "Despesas", "Para gastar → 🎯 Férias"
+    interno: bool = False  # passagem entre envelopes (o dinheiro não entra nem sai da conta)
+    historico: bool = False  # data anterior ao saldo inicial: não afeta o saldo
+
+
+class HistoryOut(BaseModel):
+    month: str  # "AAAA-MM"
+    type: HistoryType
+    items: List[HistoryItem]
+    # totais da seleção; em "tudo" não contam as passagens entre envelopes (já contadas no rendimento)
+    entradas: float
+    saidas: float  # positivo

@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from .config import settings
-from .routers import auth, account, income_entries, spendings, expenses, buckets, summary
+from .routers import auth, account, income_entries, spendings, expenses, buckets, summary, history
 
 app = FastAPI(title="Finanças API", description="API multi-user de gestão financeira", version="1.0.0")
 
@@ -27,6 +27,7 @@ app.include_router(expenses.router, prefix="/api")
 app.include_router(buckets.router, prefix="/api")
 app.include_router(buckets.movements_router, prefix="/api")
 app.include_router(summary.router, prefix="/api")
+app.include_router(history.router, prefix="/api")
 
 
 # A PWA só se atualiza de forma fiável se o browser revalidar sempre estes ficheiros

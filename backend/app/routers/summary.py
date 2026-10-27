@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Optional
 
 from fastapi import APIRouter, Depends
@@ -6,12 +7,13 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..auth import get_current_user
-from ..periods import parse_month, add_months, month_key, active_in_month, in_month
+from ..periods import parse_month, add_months, month_key, month_end, active_in_month, in_month
 from .. import envelopes, models, schemas
 
 router = APIRouter(prefix="/summary", tags=["summary"], dependencies=[Depends(get_current_user)])
 
 HISTORY_MONTHS = 6
+TOP_PLACES = 5
 ZERO = envelopes.ZERO
 
 
@@ -81,6 +83,33 @@ def get_summary(month: Optional[str] = None, db: Session = Depends(get_db), curr
             mes=month_key(h), recebido=received.get(h, ZERO), saidas=paid.get(h, ZERO) + spent.get(h, ZERO),
         ))
 
+    # Para gastar no fim de cada dia do mês, até hoje (meses futuros ficam vazios)
+    today = date.today()
+    last = min(month_end(m), today)
+    evolucao = [
+        schemas.DayBalance(dia=d, saldo=v)
+        for d, v in (envelopes.para_gastar_by_day(db, uid, m, last) if m <= last else [])
+    ]
+
+    # onde se gastou mais: gastos do dia a dia por local; os sem local juntam-se pela categoria
+    places: dict = {}  # (por categoria?, local ou id da categoria) -> [nome, ícone, total]
+    for place, cat_id, cat_name, cat_icon, total in (
+        db.query(Spend.place, Cat.id, Cat.name, Cat.icon, func.sum(Spend.amount))
+        .outerjoin(Cat, Cat.id == Spend.category_id)
+        .filter(Spend.user_id == uid, in_month(Spend.date, m))
+        .group_by(Spend.place, Cat.id, Cat.name, Cat.icon)
+    ):
+        if place:
+            entry = places.setdefault((False, place), [place, None, ZERO])
+        else:
+            entry = places.setdefault((True, cat_id), [cat_name or "Sem categoria", cat_icon if cat_id else "🏷️", ZERO])
+        entry[2] += total
+    top = sorted(places.items(), key=lambda kv: (-kv[1][2], kv[1][0]))[:TOP_PLACES]
+    top_locais = [
+        schemas.PlaceTotal(nome=name, total=total, por_categoria=by_cat, icone=icon)
+        for (by_cat, _), (name, icon, total) in top
+    ]
+
     env = envelopes.compute(db, uid)
     return schemas.SummaryOut(
         month=month_key(m),
@@ -96,4 +125,6 @@ def get_summary(month: Optional[str] = None, db: Session = Depends(get_db), curr
         opening_balance=env.opening_balance,
         opening_date=env.opening_date,
         opening_defined=env.opening_date is not None,
+        evolucao_para_gastar=evolucao,
+        top_locais=top_locais,
     )

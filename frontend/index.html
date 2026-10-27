@@ -93,6 +93,7 @@ img,svg{max-width:100%;}
 }
 .brand-row{display:flex; align-items:center; justify-content:space-between; gap:.75rem;}
 .brand-row > div{min-width:0;}
+.head-actions{display:flex; align-items:center; gap:.5rem; flex-shrink:0;}
 h1{font-size:clamp(1.4rem, 1.15rem + 1.2vw, 1.85rem); margin:0; letter-spacing:-.02em; line-height:1.15;}
 .sub{color:var(--text-dim); font-size:.8125rem; overflow-wrap:anywhere;}
 .icon-btn{
@@ -187,6 +188,16 @@ h1{font-size:clamp(1.4rem, 1.15rem + 1.2vw, 1.85rem); margin:0; letter-spacing:-
 .bars .ax{fill:var(--text-faint); font-size:11px;}
 .bars .ax.cur{fill:var(--text); font-weight:700;}
 .bars .gl{stroke:var(--grid); stroke-width:1;}
+.evo-head{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:0 .75rem; margin:-.25rem 0 .5rem;}
+.evo-head b{font-size:1.5rem; font-weight:800; letter-spacing:-.02em;}
+.evo-head span{font-size:.8125rem; color:var(--text-dim);}
+.line-chart svg,.hbars svg{display:block; width:100%; height:auto;}
+.line-chart .ax,.hbars .sub-t{fill:var(--text-faint); font-size:11px;}
+.line-chart .gl{stroke:var(--grid); stroke-width:1;}
+.line-chart .zero{stroke:var(--text-faint); stroke-width:1; stroke-dasharray:4 3;}
+.hbars .nm{fill:var(--text); font-size:13px; font-weight:600;}
+.hbars .vl{fill:var(--text-dim); font-size:12px; font-variant-numeric:tabular-nums;}
+.hbars .vl .strong{fill:var(--text); font-weight:700;}
 details.values{margin-top:.5rem; font-size:.8125rem; color:var(--text-dim);}
 details.values summary{cursor:pointer; min-height:44px; display:flex; align-items:center;}
 .vtable{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums;}
@@ -210,6 +221,10 @@ details.values summary{cursor:pointer; min-height:44px; display:flex; align-item
 .more-btn{background:none; border:none; color:var(--text-faint); min-width:44px; min-height:44px; border-radius:.75rem; font-size:1.25rem; line-height:1;}
 .badge{font-size:.6875rem; font-weight:700; padding:.125rem .5rem; border-radius:999px; background:var(--input-bg); color:var(--text-dim); letter-spacing:.02em; white-space:nowrap;}
 .badge.rec{color:var(--accent); background:color-mix(in srgb, var(--accent) 14%, var(--input-bg));}
+.badge.paid{color:var(--income); background:color-mix(in srgb, var(--income) 14%, var(--input-bg));}
+.badge.late{color:var(--expense); background:color-mix(in srgb, var(--expense) 15%, var(--input-bg));}
+.badge.soon{color:var(--warn); background:color-mix(in srgb, var(--warn) 16%, var(--input-bg));}
+.badge.hist{color:var(--text-dim); font-weight:600;}
 .badge.mandatory{color:var(--warn); background:color-mix(in srgb, var(--warn) 15%, var(--input-bg)); text-transform:uppercase;}
 .alloc-chips{display:flex; flex-wrap:wrap; gap:.25rem .375rem; margin-top:.375rem;}
 .chip{display:inline-flex; align-items:center; max-width:100%; font-size:.75rem; color:var(--text-dim); background:var(--input-bg); border-radius:999px; padding:.125rem .5rem; white-space:nowrap;}
@@ -227,6 +242,29 @@ details.values summary{cursor:pointer; min-height:44px; display:flex; align-item
 .cat-line:first-of-type{border-top:none;}
 .cat-line .nm{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600;}
 .hist-list{margin-top:.5rem;}
+.meta .due{font-weight:700; color:var(--text-dim);}
+
+/* ---------- histórico ---------- */
+.filter-chips{display:flex; flex-wrap:wrap; gap:.375rem; margin:0 0 .75rem;}
+.filter-chips button{display:inline-flex; align-items:center; gap:.375rem; min-height:44px; padding:.5rem .875rem; border-radius:999px;
+  background:var(--card); border:1px solid var(--card-border); color:var(--text-dim); font-size:.875rem; font-weight:700;}
+.filter-chips button.on{color:var(--accent); border-color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, var(--card));}
+.filter-chips .dot{margin-right:0;}
+.totals-row{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:.5rem;}
+.totals-row .stat-tile .val{font-size:1.05rem;}
+.search-in{margin:0 0 .875rem;}
+.hrow{display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:.625rem; padding:.5rem 0; border-top:1px solid var(--card-border);}
+.day-head + .hrow{border-top:none;}
+.hrow .main{min-width:0;}
+.hrow .t{font-size:.9375rem; font-weight:600;}
+.hrow .meta{font-size:.75rem; color:var(--text-faint); display:flex; flex-wrap:wrap; align-items:center; gap:.25rem .5rem; margin-top:.125rem;}
+.hrow .meta > span{min-width:0; max-width:100%; overflow-wrap:break-word;}
+.hrow .meta .dt{white-space:nowrap;}
+.hrow .meta .badge{white-space:normal;}
+.hrow .meta .env{font-weight:700; color:var(--text-dim);}
+.hrow .a{font-size:.9375rem; font-weight:700; text-align:right;}
+.h-ic{width:2.25rem; height:2.25rem; border-radius:.75rem; display:inline-flex; align-items:center; justify-content:center; font-size:1rem; font-weight:800; flex-shrink:0;
+  color:var(--tc); background:color-mix(in srgb, var(--tc) 16%, var(--input-bg));}
 
 .cat-card{margin-bottom:.75rem;}
 .cat-head{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.25rem .5rem; margin-bottom:.25rem;}
@@ -284,7 +322,7 @@ details.values summary{cursor:pointer; min-height:44px; display:flex; align-item
   .topbar{margin-inline:0; padding-inline:0; background:none; backdrop-filter:none; -webkit-backdrop-filter:none; position:static;}
   .topbar .brand{display:none;}
   .tab.desk-only{display:flex;}
-  .settings-btn{display:none;}
+  .settings-btn,.history-btn{display:none;}
   .fab{bottom:calc(1.5rem + var(--safe-b)); right:calc(1.5rem + var(--safe-r));}
 }
 
@@ -436,6 +474,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
     <button class="tab" data-v="spendings" onclick="switchView('spendings')"><span class="ic">⊖</span><span class="tl">Gastos</span></button>
     <button class="tab" data-v="bills" onclick="switchView('bills')"><span class="ic">≣</span><span class="tl">Contas</span></button>
     <button class="tab" data-v="buckets" onclick="switchView('buckets')"><span class="ic">◎</span><span class="tl">Objetivos</span></button>
+    <button class="tab desk-only" data-v="history" onclick="switchView('history')"><span class="ic">☰</span><span class="tl">Histórico</span></button>
     <button class="tab desk-only" data-v="settings" onclick="switchView('settings')"><span class="ic">⚙</span><span class="tl">Definições</span></button>
   </nav>
 
@@ -446,7 +485,10 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
           <h1 class="brand">Finanças</h1>
           <div class="sub" id="header-sub">—</div>
         </div>
-        <button class="icon-btn settings-btn" onclick="switchView('settings')" title="Definições" aria-label="Definições">⚙</button>
+        <div class="head-actions">
+          <button class="icon-btn history-btn" data-v="history" onclick="switchView('history')" title="Histórico" aria-label="Histórico de movimentos">☰</button>
+          <button class="icon-btn settings-btn" onclick="switchView('settings')" title="Definições" aria-label="Definições">⚙</button>
+        </div>
       </div>
       <div class="month-nav" id="month-nav">
         <button onclick="shiftMonth(-1)" aria-label="Mês anterior">‹</button>
@@ -508,6 +550,17 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
           <details class="values"><summary>Ver valores</summary><div id="d-bars-table"></div></details>
         </section>
 
+        <section class="card d-evo">
+          <div class="card-title" id="d-evo-title">Evolução do Para gastar</div>
+          <div id="d-evo"></div>
+          <details class="values hidden" id="d-evo-values"><summary>Ver valores</summary><div id="d-evo-table"></div></details>
+        </section>
+
+        <section class="card d-top">
+          <div class="card-title">Onde gastas mais</div>
+          <div class="hbars" id="d-top"></div>
+        </section>
+
         <section class="card span-all d-goals">
           <div class="card-title">Objetivos <a onclick="switchView('buckets')">ver todos</a></div>
           <div id="d-goals"></div>
@@ -527,11 +580,13 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
     <main class="view hidden" id="view-spendings">
       <div class="view-head"><h2>Gastos</h2><div class="sub">O dia a dia sai do envelope Para gastar</div></div>
       <div class="card">
-        <div class="kv big"><span>Para gastar agora</span><b class="money" id="sp-pg">0,00 €</b></div>
-        <div class="kv"><span id="sp-month-lbl">Gasto no mês</span><b class="money" id="sp-month">0,00 €</b></div>
+        <div class="kv big"><span id="sp-month-lbl">Gasto no mês</span><b class="money" id="sp-month">0,00 €</b></div>
+        <div class="kv"><span><span class="dot" style="background:var(--env-pg)"></span>Para gastar agora</span><b class="money" id="sp-pg">0,00 €</b></div>
+        <label for="sp-filter">Categoria</label>
+        <select id="sp-filter" onchange="spFilter = this.value; renderSpendings()"></select>
       </div>
       <button class="btn-primary" style="margin-top:0" onclick="openSpendingModal()">＋ Gasto</button>
-      <div class="sec-title"><span id="sp-list-title">Gastos</span></div>
+      <div class="sec-title"><span id="sp-list-title">Gastos</span><span class="money" id="sp-list-total"></span></div>
       <div class="card" id="spending-list"></div>
     </main>
 
@@ -543,6 +598,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
         <div class="kv"><span>Planeado</span><b class="money" id="b-plan">0,00 €</b></div>
         <div class="kv"><span>Pago</span><b class="money" id="b-paid">0,00 €</b></div>
         <div class="kv"><span>Por pagar</span><b class="money" id="b-due">0,00 €</b></div>
+        <div class="kv hidden" id="b-late-row"><span>Em atraso</span><b class="money neg" id="b-late">0,00 €</b></div>
         <div class="kv"><span><span class="dot" style="background:var(--env-desp)"></span>No envelope Despesas</span><b class="money" id="b-env">0,00 €</b></div>
       </div>
       <div id="categories-list"></div>
@@ -558,6 +614,21 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
       </div>
       <div id="buckets-list"></div>
       <button class="btn-primary" onclick="openBucketModal()">＋ Novo objetivo</button>
+    </main>
+
+    <!-- HISTÓRICO -->
+    <main class="view hidden" id="view-history">
+      <div class="view-head"><h2>Histórico</h2><div class="sub">Todos os movimentos do mês, dos mais recentes para os mais antigos</div></div>
+      <div class="filter-chips" id="hist-chips" role="group" aria-label="Filtrar por tipo"></div>
+      <div class="card">
+        <div class="totals-row">
+          <div class="stat-tile"><div class="lbl">Entradas</div><div class="val pos money" id="h-in">0,00 €</div></div>
+          <div class="stat-tile"><div class="lbl">Saídas</div><div class="val neg money" id="h-out">0,00 €</div></div>
+        </div>
+        <p class="hint sub" id="h-note" style="margin:.5rem 0 0"></p>
+      </div>
+      <input id="hist-q" class="search-in" type="search" aria-label="Pesquisar no histórico" placeholder="Pesquisar descrição, local ou categoria" autocomplete="off" oninput="onHistorySearch()">
+      <div class="card" id="history-list"></div>
     </main>
 
     <!-- DEFINIÇÕES -->
@@ -606,6 +677,14 @@ const SOURCES = ['Salário','Subsídio','Venda','Extra','Reembolso','Juros'];
 const MONTHS = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const MONTHS_SHORT = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 const CHART_SLOTS = 8;
+// tipos do histórico: cor e ícone iguais aos dos envelopes e separadores
+const HIST_TYPES = [
+  {k:'tudo', l:'Tudo'},
+  {k:'despesas', l:'Despesas', c:'--env-desp', ic:'≣'},
+  {k:'objetivos', l:'Objetivos', c:'--env-obj', ic:'◎'},
+  {k:'gastos', l:'Gastos', c:'--env-pg', ic:'⊖'},
+  {k:'receitas', l:'Receitas', c:'--c1', ic:'⊕'},
+];
 const ENVELOPES = [
   {k:'despesas', l:'Despesas', c:'--env-desp'},
   {k:'objetivos', l:'Objetivos', c:'--env-obj'},
@@ -617,6 +696,11 @@ let buckets = [];
 let incomes = [];
 let spendings = [];
 let summary = null;
+let places = [];  // locais já usados nos gastos, dos mais frequentes para os menos
+let spFilter = '';  // filtro de categoria dos gastos: '' todas, '__none' sem categoria, ou o id
+let histData = null;
+let histType = 'tudo';
+let histSeq = 0;
 let currentUser = null;
 let currentView = 'dashboard';
 let month = currentMonthKey();
@@ -780,11 +864,12 @@ async function boot(){
 
 async function loadAll(){
   const q = '?month=' + month;
-  const [incs, sps, cats, bks, sum_] = await Promise.all([
-    api('/income-entries'+q), api('/spendings'+q), api('/categories'+q), api('/buckets'), api('/summary'+q)
+  const [incs, sps, cats, bks, sum_, pls] = await Promise.all([
+    api('/income-entries'+q), api('/spendings'+q), api('/categories'+q), api('/buckets'), api('/summary'+q), api('/spendings/places')
   ]);
-  incomes = incs; spendings = sps; categories = cats; buckets = bks; summary = sum_;
+  incomes = incs; spendings = sps; categories = cats; buckets = bks; summary = sum_; places = pls;
   renderAll();
+  if(currentView === 'history') await loadHistory();
 }
 
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && getToken()) loadAll().catch(()=>{}); });
@@ -792,7 +877,7 @@ document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState=
 let _resizeT;
 window.addEventListener('resize', ()=>{
   clearTimeout(_resizeT);
-  _resizeT = setTimeout(()=>{ if(summary && currentView==='dashboard') renderBars(); }, 150);
+  _resizeT = setTimeout(()=>{ if(summary && currentView==='dashboard') renderCharts(); }, 150);
 });
 
 // ---------- MÊS ----------
@@ -811,7 +896,8 @@ function switchView(v){
   document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active', el.dataset.v===v));
   $('fab').classList.toggle('hidden', v==='settings');
   renderMonthNav();
-  if(v==='dashboard' && summary) renderBars();
+  if(v==='dashboard' && summary) renderCharts();
+  if(v==='history'){ renderHistoryChips(); if(summary) loadHistory().catch(()=>{}); }
   if(v==='settings') renderInvites();
   window.scrollTo(0, 0);
 }
@@ -852,8 +938,14 @@ function renderDashboard(){
   setMoney('d-porpagar', s.por_pagar);
 
   renderDonut();
-  renderBars();
+  renderCharts();
   renderGoals();
+}
+// os gráficos com viewBox à largura do contentor redesenham-se quando a largura muda
+function renderCharts(){
+  renderBars();
+  renderEvolution();
+  renderTopPlaces();
 }
 
 // cor fixa por categoria (posição na lista do utilizador); a partir da 9.ª junta-se em "Outras"
@@ -942,6 +1034,83 @@ function renderBars(){
   el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Receitas e saídas dos últimos 6 meses (valores em euros)">${out}</svg>`;
 }
 
+function daysInMonth(key){ const [y, m] = key.split('-').map(Number); return new Date(y, m, 0).getDate(); }
+function axLabel(v){ return v < 0 ? '−' + compact(-v) : compact(v); }
+function pctLabel(v, total){ const p = total > 0 ? v/total*100 : 0; return p > 0 && p < 1 ? '<1%' : Math.round(p) + '%'; }
+function clip(text, maxChars){ return text.length > maxChars ? text.slice(0, Math.max(1, maxChars - 1)) + '…' : text; }
+
+// linha/área: Para gastar no fim de cada dia do mês até hoje; abaixo de zero fica a vermelho
+function renderEvolution(){
+  const el = $('d-evo');
+  const data = summary.evolucao_para_gastar || [];
+  const pts = data.filter(d => d.saldo !== null).map(d => ({day: Number(d.dia.slice(8, 10)), iso: d.dia, v: d.saldo}));
+  $('d-evo-values').classList.toggle('hidden', !pts.length);
+  if(!pts.length){
+    const msg = !data.length ? `${esc(monthLabel(month))} ainda não começou.<br>A evolução aparece dia a dia.`
+      : `Antes do saldo inicial (${fmtDate(summary.opening_date)}) não há saldo para mostrar.`;
+    el.innerHTML = `<div class="empty"><div class="empty-ic">📈</div>${msg}</div>`;
+    return;
+  }
+  const last = pts[pts.length - 1], N = daysInMonth(month);
+  const lo = Math.min(0, ...pts.map(p => p.v)), hi = Math.max(0, ...pts.map(p => p.v));
+  const top = hi > 0 ? niceMax(hi) : (lo < 0 ? 0 : 10), bot = lo < 0 ? -niceMax(-lo) : 0;
+  const ticks = [...new Set([bot, 0, top])];
+  const W = Math.max(240, Math.round(el.clientWidth || 320)), H = 170;
+  const padL = Math.max(...ticks.map(t => axLabel(t).length)) * 6.5 + 10, padR = 8, padT = 10, padB = 22;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const x = (day) => padL + (N > 1 ? (day - 1) / (N - 1) : 0) * plotW;
+  const y = (v) => padT + (top - v) / (top - bot) * plotH;
+  const y0 = y(0);
+  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${x(p.day).toFixed(1)},${y(p.v).toFixed(1)}`).join(' ');
+  const area = `${line} L${x(last.day).toFixed(1)},${y0.toFixed(1)} L${x(pts[0].day).toFixed(1)},${y0.toFixed(1)} Z`;
+  const layer = (col) => `<path d="${area}" fill="${col}" fill-opacity=".16"/>
+    <path d="${line}" fill="none" stroke="${col}" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"/>`;
+  let out = `<defs>
+    <clipPath id="evo-pos"><rect x="0" y="0" width="${W}" height="${y0.toFixed(1)}"/></clipPath>
+    <clipPath id="evo-neg"><rect x="0" y="${y0.toFixed(1)}" width="${W}" height="${(H - y0).toFixed(1)}"/></clipPath>
+  </defs>`;
+  ticks.filter(t => t !== 0).forEach(t => { out += `<line class="gl" x1="${padL}" x2="${W - padR}" y1="${y(t)}" y2="${y(t)}"/>`; });
+  out += `<g clip-path="url(#evo-pos)">${layer('var(--env-pg)')}</g><g clip-path="url(#evo-neg)">${layer('var(--expense)')}</g>`;
+  out += `<line class="zero" x1="${padL}" x2="${W - padR}" y1="${y0}" y2="${y0}"/>`;
+  ticks.forEach(t => { out += `<text class="ax" x="${padL - 6}" y="${y(t) + 4}" text-anchor="end">${axLabel(t)}</text>`; });
+  [[1, 'start'], [Math.round(N / 2), 'middle'], [N, 'end']].forEach(([d, anchor]) => {
+    out += `<text class="ax" x="${x(d)}" y="${H - 6}" text-anchor="${anchor}">${d} ${monthShort(month)}</text>`;
+  });
+  pts.forEach(p => { out += `<circle cx="${x(p.day).toFixed(1)}" cy="${y(p.v).toFixed(1)}" r="7" fill="transparent"><title>${fmtDate(p.iso)}: ${fmt(p.v)}</title></circle>`; });
+  out += `<circle cx="${x(last.day).toFixed(1)}" cy="${y(last.v).toFixed(1)}" r="4.5" fill="${last.v < 0 ? 'var(--expense)' : 'var(--env-pg)'}" stroke="var(--modal-bg)" stroke-width="2"/>`;
+  const when = month === currentMonthKey() ? 'hoje' : 'a ' + fmtDate(last.iso);
+  el.innerHTML = `<div class="evo-head"><b class="money ${last.v < 0 ? 'neg' : ''}">${fmt(last.v)}</b><span>${when}${pts[0].day > 1 ? ' · desde ' + fmtDate(pts[0].iso) : ''}</span></div>
+    <div class="line-chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Para gastar no fim de cada dia de ${esc(monthLabel(month).toLowerCase())}: ${esc(fmt(last.v))} ${when}">${out}</svg></div>`;
+  $('d-evo-table').innerHTML = `<table class="vtable"><thead><tr><th>Dia</th><th>Para gastar</th></tr></thead><tbody>
+    ${pts.slice().reverse().map(p => `<tr><td>${fmtDate(p.iso)}</td><td>${fmt(p.v)}</td></tr>`).join('')}</tbody></table>`;
+}
+
+// barras horizontais: top 5 de gastos do dia a dia por local (os sem local, pela categoria)
+function renderTopPlaces(){
+  const el = $('d-top');
+  const data = summary.top_locais || [];
+  if(!data.length){
+    el.innerHTML = `<div class="empty"><div class="empty-ic">🧭</div>Sem gastos do dia a dia em ${esc(monthLabel(month).toLowerCase())}.<br>Regista o local de cada gasto para veres onde gastas mais.</div>`;
+    return;
+  }
+  const total = summary.gasto_dia_a_dia, max = Math.max(...data.map(d => d.total));
+  const W = Math.max(240, Math.round(el.clientWidth || 320)), rowH = 46, H = data.length * rowH + 14;
+  let out = '';
+  data.forEach((d, i) => {
+    const top = i * rowH, val = `${fmt(d.total)} · ${pctLabel(d.total, total)}`;
+    const suffix = d.por_categoria ? ' · sem local' : '';
+    const room = Math.floor((W - val.length * 6.8 - suffix.length * 5.8 - 14) / 7.6);
+    const name = clip((d.icone ? d.icone + ' ' : '') + d.nome, Math.max(4, room));
+    out += `<g><title>${esc(d.nome)}${suffix}: ${fmt(d.total)} (${pctLabel(d.total, total)})</title>
+      <text class="nm" x="0" y="${top + 15}">${esc(name)}${suffix ? `<tspan class="sub-t">${suffix}</tspan>` : ''}</text>
+      <text class="vl" x="${W}" y="${top + 15}" text-anchor="end"><tspan class="strong">${fmt(d.total)}</tspan> · ${pctLabel(d.total, total)}</text>
+      <rect x="0" y="${top + 23}" width="${W}" height="10" rx="5" fill="var(--track)"/>
+      <rect x="0" y="${top + 23}" width="${Math.max(3, d.total / max * W).toFixed(1)}" height="10" rx="5" fill="var(--c2)"/></g>`;
+  });
+  out += `<text class="sub-t" x="0" y="${H - 2}">% do total gasto no mês (${fmt(total)})</text>`;
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Onde gastas mais em ${esc(monthLabel(month).toLowerCase())}: ${esc(data.map(d => d.nome + ' ' + fmt(d.total)).join(', '))}">${out}</svg>`;
+}
+
 function renderGoals(){
   const el = $('d-goals');
   const active = buckets.filter(b => !b.archived);
@@ -1020,28 +1189,98 @@ function renderIncome(){
 }
 
 // ---------- GASTOS ----------
+function spendingCatKey(sp){ return sp.category_id || '__none'; }
+function renderSpendingFilter(){
+  const sel = $('sp-filter');
+  const opts = categories.map(c => [c.id, `${c.icon} ${c.name}`]);
+  if(spendings.some(sp => !sp.category_id)) opts.push(['__none', '🏷️ Sem categoria']);
+  if(spFilter && !opts.some(([k]) => k === spFilter)) spFilter = '';
+  sel.innerHTML = `<option value="">Todas as categorias</option>` +
+    opts.map(([k, l]) => `<option value="${k}" ${k === spFilter ? 'selected' : ''}>${esc(l)}</option>`).join('');
+}
+
 function renderSpendings(){
   setMoney('sp-pg', summary.envelopes.para_gastar, true);
   $('sp-month-lbl').textContent = 'Gasto em ' + monthLabel(month).toLowerCase();
   setMoney('sp-month', summary.gasto_dia_a_dia);
-  $('sp-list-title').textContent = 'Gastos de ' + monthLabel(month).toLowerCase();
+  renderSpendingFilter();
+  const list = spFilter ? spendings.filter(sp => spendingCatKey(sp) === spFilter) : spendings;
+  $('sp-list-title').textContent = (spFilter ? $('sp-filter').selectedOptions[0].textContent + ' · ' : 'Gastos de ') + monthLabel(month).toLowerCase();
+  $('sp-list-total').textContent = list.length ? fmt(sum(list, x=>x.amount)) : '';
   const el = $('spending-list');
-  if(!spendings.length){ el.innerHTML = '<div class="empty">Sem gastos neste mês.</div>'; return; }
+  if(!list.length){ el.innerHTML = `<div class="empty">${spFilter ? 'Sem gastos desta categoria neste mês.' : 'Sem gastos neste mês.'}</div>`; return; }
   const days = [];
-  spendings.forEach(sp => {
+  list.forEach(sp => {
     let d = days[days.length - 1];
     if(!d || d.date !== sp.date){ d = {date: sp.date, items: []}; days.push(d); }
     d.items.push(sp);
   });
-  el.innerHTML = days.map(d => `<div class="day-head"><span>${fmtDate(d.date)}</span><span class="money">${fmt(sum(d.items, x=>x.amount))}</span></div>` +
+  const today = todayISO();
+  el.innerHTML = days.map(d => `<div class="day-head"><span>${fmtDate(d.date)}${d.date === today ? ' · hoje' : ''}</span><span class="money">${fmt(sum(d.items, x=>x.amount))}</span></div>` +
     d.items.map(sp => `<div class="mov-row">
       <div class="main">
-        <div class="t clamp2">${esc(sp.description || sp.categoria || 'Gasto')}</div>
-        <div class="meta"><span>${esc(sp.icone || '🏷️')} ${esc(sp.categoria || 'Sem categoria')}</span></div>
+        <div class="t clamp2">${sp.description ? esc(sp.description) : sp.place ? '📍 ' + esc(sp.place) : esc(sp.categoria || 'Gasto')}</div>
+        <div class="meta">
+          ${sp.place && sp.description ? `<span>📍 ${esc(sp.place)}</span>` : ''}
+          <span>${esc(sp.icone || '🏷️')} ${esc(sp.categoria || 'Sem categoria')}</span>
+          <span>${fmtDate(sp.date)}</span>
+        </div>
       </div>
       <div class="a money neg">${fmt(sp.amount)}</div>
       <button class="more-btn" onclick="openSpendingActions('${sp.id}')" aria-label="Opções">⋯</button>
     </div>`).join('')).join('');
+}
+
+// ---------- HISTÓRICO ----------
+function renderHistoryChips(){
+  $('hist-chips').innerHTML = HIST_TYPES.map(t => `<button type="button" class="${t.k === histType ? 'on' : ''}" aria-pressed="${t.k === histType}" onclick="setHistType('${t.k}')">${t.c ? `<span class="dot" style="background:var(${t.c})"></span>` : ''}${t.l}</button>`).join('');
+}
+function setHistType(k){ histType = k; renderHistoryChips(); loadHistory().catch(()=>{}); }
+let _histT;
+function onHistorySearch(){ clearTimeout(_histT); _histT = setTimeout(()=>loadHistory().catch(()=>{}), 250); }
+async function loadHistory(){
+  const seq = ++histSeq;
+  const q = $('hist-q').value.trim();
+  const res = await api(`/history?month=${month}&type=${histType}${q ? '&q=' + encodeURIComponent(q) : ''}`);
+  if(seq !== histSeq) return;  // já foi pedida outra seleção entretanto
+  histData = res;
+  renderHistory();
+}
+function historyRow(i){
+  const t = HIST_TYPES.find(x => x.k === i.tipo);
+  const meta = [
+    i.local && i.local !== i.descricao ? `<span>📍 ${esc(i.local)}</span>` : '',
+    i.categoria && i.tipo !== 'objetivos' ? `<span>${esc(i.icone || '')} ${esc(i.categoria)}</span>` : '',
+    `<span class="dt">${fmtDate(i.date)}</span>`,
+    `<span class="env">→ ${esc(i.envelope)}</span>`,
+    i.historico ? '<span class="badge hist">histórico (não afeta o saldo)</span>' : '',
+  ].join('');
+  return `<div class="hrow">
+    <span class="h-ic" style="--tc:var(${t.c})" title="${t.l}" aria-hidden="true">${t.ic}</span>
+    <div class="main"><div class="t clamp2">${i.local && i.local === i.descricao ? '📍 ' : ''}${esc(i.descricao)}</div><div class="meta">${meta}</div></div>
+    <div class="a money ${i.amount < 0 ? 'neg' : 'pos'}">${i.amount < 0 ? '−' : '+'}${fmt(Math.abs(i.amount))}</div>
+  </div>`;
+}
+function renderHistory(){
+  const h = histData;
+  setMoney('h-in', h.entradas);
+  setMoney('h-out', h.saidas);
+  $('h-note').textContent = histType === 'tudo' ? 'Os totais não contam as passagens entre envelopes (depósitos, levantamentos e partes de rendimentos para objetivos).' : '';
+  $('h-note').classList.toggle('hidden', histType !== 'tudo');
+  const el = $('history-list');
+  if(!h.items.length){
+    const what = histType === 'tudo' ? 'movimentos' : HIST_TYPES.find(t => t.k === histType).l.toLowerCase();
+    el.innerHTML = `<div class="empty"><div class="empty-ic">🗂️</div>Sem ${what} em ${esc(monthLabel(month).toLowerCase())}${$('hist-q').value.trim() ? ' para esta pesquisa' : ''}.</div>`;
+    return;
+  }
+  const days = [];
+  h.items.forEach(i => {
+    let d = days[days.length - 1];
+    if(!d || d.date !== i.date){ d = {date: i.date, items: []}; days.push(d); }
+    d.items.push(i);
+  });
+  const today = todayISO();
+  el.innerHTML = days.map(d => `<div class="day-head"><span>${fmtDate(d.date)}${d.date === today ? ' · hoje' : ''}</span></div>` + d.items.map(historyRow).join('')).join('');
 }
 
 // ---------- CONTAS ----------
@@ -1049,15 +1288,30 @@ function recurringMeta(e){
   return `desde ${fmtMonthOf(e.date)}${e.end_date ? ' até ' + fmtMonthOf(e.end_date) : ''}`;
 }
 
+// dia de vencimento: o dia da data de início, limitado ao último dia dos meses curtos
+function dueDay(e){ return Math.min(Number(e.date.slice(8, 10)), daysInMonth(month)); }
+// estado do mês visto: paga, em atraso / vence em N dias (só no mês atual) ou por pagar
+function billStatus(e){
+  if(e.payment) return {k:'paid', l:'paga'};
+  if(month === currentMonthKey()){
+    const left = dueDay(e) - new Date().getDate();
+    if(left < 0) return {k:'late', l:'em atraso'};
+    if(left === 0) return {k:'soon', l:'vence hoje'};
+    if(left <= 3) return {k:'soon', l:`vence em ${left} ${left === 1 ? 'dia' : 'dias'}`};
+  }
+  return {k:'', l:'por pagar'};
+}
+
 function billRow(e){
   const p = e.payment;
+  const st = billStatus(e);
   const label = p
     ? `✓ Paga · ${fmtDate(p.paid_date)}${cents(p.amount) !== cents(e.amount) ? ' · ' + fmt(p.amount) : ''}`
     : 'Marcar como paga';
   return `<div class="mov-row">
     <div class="main">
       <div class="t clamp2">${esc(e.title)}</div>
-      <div class="meta"><span>${e.is_recurring ? recurringMeta(e) : fmtDate(e.date)}</span>${e.is_recurring ? '<span class="badge rec">↻ mensal</span>' : ''}</div>
+      <div class="meta"><span class="due">Vence dia ${dueDay(e)}</span><span class="badge ${st.k}">${st.l}</span><span>${e.is_recurring ? recurringMeta(e) : fmtDate(e.date)}</span>${e.is_recurring ? '<span class="badge rec">↻ mensal</span>' : ''}</div>
       <button class="pay-btn ${p ? 'paid' : ''}" onclick="openPaymentModal('${e.id}')">${label}</button>
     </div>
     <div class="a money neg">${fmt(e.amount)}</div>
@@ -1072,6 +1326,9 @@ function renderBills(){
   setMoney('b-paid', sum(bills.filter(b=>b.payment), b=>b.payment.amount));
   setMoney('b-due', sum(bills.filter(b=>!b.payment), b=>b.amount));
   setMoney('b-env', summary.envelopes.despesas, true);
+  const late = bills.filter(b => billStatus(b).k === 'late');
+  $('b-late-row').classList.toggle('hidden', !late.length);
+  setMoney('b-late', sum(late, b=>b.amount));
   const el = $('categories-list');
   if(!categories.length){ el.innerHTML = '<div class="card"><div class="empty">Sem categorias ainda. Cria a primeira abaixo.</div></div>'; return; }
   const withBills = categories.filter(c => c.expenses.length);
@@ -1084,7 +1341,7 @@ function renderBills(){
           <button onclick="openCategoryModal('${cat.id}')" aria-label="Editar categoria">✎</button>
         </div>
       </div>
-      ${cat.expenses.map(billRow).join('')}
+      ${cat.expenses.slice().sort((a, b) => dueDay(a) - dueDay(b) || a.title.localeCompare(b.title, 'pt')).map(billRow).join('')}
       <button class="add-btn" onclick="openBillModal('${cat.id}')">＋ conta</button>
     </div>`).join('') +
     (empty.length ? `<div class="card">
@@ -1320,6 +1577,9 @@ function openSpendingModal(id){
       <label>Ícone</label>
       <div class="icon-picker" id="sp-new-icons"></div>
     </div>
+    <label for="sp-place">Local (opcional)</label>
+    <input id="sp-place" type="text" list="sp-places" maxlength="60" autocomplete="off" placeholder="ex: Pingo Doce" value="${esc(sp && sp.place || '')}">
+    <datalist id="sp-places">${places.map(pl => `<option value="${esc(pl)}">`).join('')}</datalist>
     <label for="sp-desc">Descrição (opcional)</label>
     <input id="sp-desc" type="text" placeholder="ex: Monster" value="${esc(sp && sp.description || '')}">
     <label for="sp-date">Data</label>
@@ -1343,7 +1603,9 @@ function saveSpending(id){
     if(category_id === '__nova'){
       category_id = (await api('/categories', {method:'POST', body: JSON.stringify({name: newName, icon: window._newCatIcon})})).id;
     }
-    const body = {amount, description: $('sp-desc').value.trim() || null, date};
+    const place = $('sp-place').value.trim();
+    if(place.length > 60){ toast('O local pode ter no máximo 60 caracteres.'); return; }
+    const body = {amount, description: $('sp-desc').value.trim() || null, place: place || null, date};
     if(category_id) body.category_id = category_id;
     if(id) await api('/spendings/'+id, {method:'PUT', body: JSON.stringify(body)});
     else await api('/spendings', {method:'POST', body: JSON.stringify(body)});
@@ -1354,7 +1616,7 @@ function saveSpending(id){
 }
 function openSpendingActions(id){
   const sp = spendings.find(x=>x.id===id); if(!sp) return;
-  actionSheet(sp.description || sp.categoria || 'Gasto', `${fmt(sp.amount)} · ${fmtDate(sp.date)}`, [
+  actionSheet(sp.description || sp.place || sp.categoria || 'Gasto', `${fmt(sp.amount)} · ${fmtDate(sp.date)}${sp.place ? ' · ' + esc(sp.place) : ''}`, [
     ['✎ Editar', `openSpendingModal('${id}')`],
     ['🗑 Apagar', `deleteSpending('${id}')`, true],
   ]);
