@@ -9,6 +9,7 @@ from ..database import get_db
 from ..auth import get_current_user
 from ..periods import parse_month, in_month
 from .. import models, owned, schemas
+from ..textnorm import group_spellings, text_key
 
 router = APIRouter(prefix="/spendings", tags=["spendings"], dependencies=[Depends(get_current_user)])
 
@@ -46,19 +47,29 @@ def list_spendings(month: Optional[str] = None, db: Session = Depends(get_db), c
     return [_to_out(sp) for sp in spendings]
 
 
-@router.get("/places", response_model=List[str])
-def list_places(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
-    """Locais já usados (para sugestões), dos mais frequentes para os menos."""
-    uses = func.count(models.Spending.id)
+def _place_groups(db: Session, user_id: str) -> dict:
+    """Locais do utilizador agrupados pela chave normalizada (ver textnorm.group_spellings)."""
     rows = (
-        db.query(models.Spending.place)
-        .filter(models.Spending.user_id == current_user.id, models.Spending.place.isnot(None))
+        db.query(models.Spending.place, func.count(models.Spending.id), func.max(models.Spending.date))
+        .filter(models.Spending.user_id == user_id, models.Spending.place.isnot(None))
         .group_by(models.Spending.place)
-        .order_by(uses.desc(), func.max(models.Spending.date).desc(), models.Spending.place)
-        .limit(50)
         .all()
     )
-    return [place for (place,) in rows]
+    return group_spellings(rows)
+
+
+def _canonical_place(db: Session, user_id: str, place: Optional[str]) -> Optional[str]:
+    """Se já existe um local com a mesma chave, usa a grafia mais usada dele; senão fica como foi escrito."""
+    key = text_key(place)
+    return _place_groups(db, user_id).get(key, [place])[0] if key else place
+
+
+@router.get("/places", response_model=List[str])
+def list_places(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    """Locais já usados (para sugestões), dos mais frequentes para os menos, sem duplicados."""
+    groups = _place_groups(db, current_user.id).values()
+    ranked = sorted(groups, key=lambda g: (-g[1], -g[2].toordinal(), g[0]))
+    return [name for name, _, _ in ranked[:50]]
 
 
 @router.post("", response_model=schemas.SpendingOut)
@@ -66,7 +77,8 @@ def create_spending(data: schemas.SpendingIn, db: Session = Depends(get_db), cur
     owned.get_category(db, data.category_id, current_user.id)
     sp = models.Spending(
         user_id=current_user.id, category_id=data.category_id, amount=data.amount,
-        description=data.description or None, place=data.place, date=data.date or date.today(),
+        description=data.description or None,
+        place=_canonical_place(db, current_user.id, data.place), date=data.date or date.today(),
     )
     db.add(sp)
     db.commit()
@@ -85,6 +97,8 @@ def update_spending(spending_id: str, data: schemas.SpendingUpdate, db: Session 
         owned.get_category(db, fields["category_id"], current_user.id)
     if "description" in fields:
         fields["description"] = fields["description"] or None
+    if fields.get("place") and fields["place"] != sp.place:
+        fields["place"] = _canonical_place(db, current_user.id, fields["place"])
     for field, value in fields.items():
         setattr(sp, field, value)
     db.commit()

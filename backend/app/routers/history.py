@@ -8,6 +8,7 @@ from ..database import get_db
 from ..auth import get_current_user
 from ..periods import parse_month, month_key, in_month
 from .. import envelopes, models, schemas
+from ..textnorm import text_key
 
 router = APIRouter(prefix="/history", tags=["history"], dependencies=[Depends(get_current_user)])
 
@@ -98,10 +99,10 @@ def get_history(
 
     items = [item for _, item in sorted(rows, key=lambda r: (r[1].date, r[0] or datetime.min), reverse=True)]
     if q and q.strip():
-        needle = q.strip().casefold()
+        needle = text_key(q)
         items = [
             i for i in items
-            if any(needle in (v or "").casefold() for v in (i.descricao, i.local, i.categoria))
+            if any(needle in text_key(v) for v in (i.descricao, i.local, i.categoria))
         ]
     # em "tudo" as passagens entre envelopes não são entradas nem saídas da conta
     counted = [i for i in items if not (type == "tudo" and i.interno)]

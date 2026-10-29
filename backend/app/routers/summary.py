@@ -9,6 +9,7 @@ from ..database import get_db
 from ..auth import get_current_user
 from ..periods import parse_month, add_months, month_key, month_end, active_in_month, in_month
 from .. import envelopes, models, schemas
+from ..textnorm import group_spellings, text_key
 
 router = APIRouter(prefix="/summary", tags=["summary"], dependencies=[Depends(get_current_user)])
 
@@ -92,18 +93,24 @@ def get_summary(month: Optional[str] = None, db: Session = Depends(get_db), curr
     ]
 
     # onde se gastou mais: gastos do dia a dia por local; os sem local juntam-se pela categoria
-    places: dict = {}  # (por categoria?, local ou id da categoria) -> [nome, ícone, total]
-    for place, cat_id, cat_name, cat_icon, total in (
-        db.query(Spend.place, Cat.id, Cat.name, Cat.icon, func.sum(Spend.amount))
+    places: dict = {}  # (por categoria?, chave do local ou id da categoria) -> [nome, ícone, total]
+    spellings = []  # (grafia, usos, data mais recente) dos gastos com local
+    for place, cat_id, cat_name, cat_icon, total, uses, last in (
+        db.query(Spend.place, Cat.id, Cat.name, Cat.icon, func.sum(Spend.amount), func.count(Spend.id), func.max(Spend.date))
         .outerjoin(Cat, Cat.id == Spend.category_id)
         .filter(Spend.user_id == uid, in_month(Spend.date, m))
         .group_by(Spend.place, Cat.id, Cat.name, Cat.icon)
     ):
-        if place:
-            entry = places.setdefault((False, place), [place, None, ZERO])
+        if text_key(place):
+            spellings.append((place, uses, last))
+            entry = places.setdefault((False, text_key(place)), [None, None, ZERO])
         else:
             entry = places.setdefault((True, cat_id), [cat_name or "Sem categoria", cat_icon if cat_id else "🏷️", ZERO])
         entry[2] += total
+    names = group_spellings(spellings)
+    for (by_cat, key), entry in places.items():
+        if not by_cat:
+            entry[0] = names[key][0]
     top = sorted(places.items(), key=lambda kv: (-kv[1][2], kv[1][0]))[:TOP_PLACES]
     top_locais = [
         schemas.PlaceTotal(nome=name, total=total, por_categoria=by_cat, icone=icon)
